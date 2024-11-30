@@ -1,0 +1,12 @@
+C:\Users\hunte\source\repos\MonoGame\libraries\Frith\obj\Debug\net8.0\Frith.csproj.AssemblyReference.cache
+C:\Users\hunte\source\repos\MonoGame\libraries\Frith\obj\Debug\net8.0\Frith.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\hunte\source\repos\MonoGame\libraries\Frith\obj\Debug\net8.0\Frith.AssemblyInfoInputs.cache
+C:\Users\hunte\source\repos\MonoGame\libraries\Frith\obj\Debug\net8.0\Frith.AssemblyInfo.cs
+C:\Users\hunte\source\repos\MonoGame\libraries\Frith\obj\Debug\net8.0\Frith.csproj.CoreCompileInputs.cache
+C:\Users\hunte\source\repos\MonoGame\libraries\Frith\bin\Debug\net8.0\Frith.deps.json
+C:\Users\hunte\source\repos\MonoGame\libraries\Frith\bin\Debug\net8.0\Frith.dll
+C:\Users\hunte\source\repos\MonoGame\libraries\Frith\bin\Debug\net8.0\Frith.pdb
+C:\Users\hunte\source\repos\MonoGame\libraries\Frith\obj\Debug\net8.0\Frith.dll
+C:\Users\hunte\source\repos\MonoGame\libraries\Frith\obj\Debug\net8.0\refint\Frith.dll
+C:\Users\hunte\source\repos\MonoGame\libraries\Frith\obj\Debug\net8.0\Frith.pdb
+C:\Users\hunte\source\repos\MonoGame\libraries\Frith\obj\Debug\net8.0\ref\Frith.dll

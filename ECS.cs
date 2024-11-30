@@ -1,0 +1,603 @@
+﻿using Frith.Components;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Text;
+using System.Threading.Tasks;
+using Signature = System.Collections.BitArray;
+
+
+namespace Frith
+{
+    public static class ECSConstants
+    {
+        public const int MAX_COMPONENTS = 32;
+
+        // Signature
+        // We use a bitset (1s and 0s) to keep track of which components an entity has,
+        // and also helps keep track of which entities a system is interested in
+        public static Signature CreateSignature() => new Signature(MAX_COMPONENTS);
+    }
+
+    //IComponent and Component
+    //Component only needs an id
+    public class IComponent
+    {
+        protected static int nextId = 0;
+    }
+
+    public class Component<T> : IComponent
+    {
+        private static int id = -1;
+        public static int GetId()
+        {
+            if (id == -1)
+            {
+                id = nextId++;
+            }
+
+            return id;
+        }
+    }
+
+
+
+    // Entity
+    // Needs an id and operator overloading. 
+    public class Entity
+    {
+        private int id;
+
+        public Entity(int id)
+        {
+            this.id = id;
+        }
+
+        public void RemoveSelf()
+        {
+            registry.RemoveEntity(this);
+        }
+         
+        public int GetId() => id;
+
+
+        public static bool operator ==(Entity a, Entity b) => a.id == b.id;
+        public static bool operator !=(Entity a, Entity b) => a.id != b.id;
+        public static bool operator >(Entity a, Entity b) => a.id > b.id;
+        public static bool operator <(Entity a, Entity b) => a.id < b.id;
+
+
+        public Registry registry;
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Entity entity && id == entity.id;
+        }
+
+        public override int GetHashCode() => id.GetHashCode();
+
+        public void AddComponent<TComponent>(TComponent component) where TComponent : struct
+        {
+            registry.AddComponent(this, component);
+        }
+
+        public void RemoveComponent<TComponent>() where TComponent: struct
+        {
+            registry.RemoveComponent<TComponent>(this);
+        }
+
+        public bool HasComponent<TComponent>() where TComponent : struct
+        {
+            return registry.HasComponent<TComponent>(this);
+        }
+
+        public ref TComponent GetComponent<TComponent>() where TComponent : struct
+        { 
+            return ref registry.GetComponent<TComponent>(this);
+        }
+
+
+
+
+        public void Tag(string tag)
+        {
+            registry.TagEntity(this, tag);
+        }
+
+        public bool HasTag(string tag)
+        {
+            return registry.EntityHasTag(this, tag);
+        }
+
+        public void Group(string group)
+        {
+            registry.GroupEntity(this, group);
+        }
+
+        public bool BelongsToGroup(string group)
+        {
+            return registry.EntityBelongsToGroup(this, group);
+        }
+
+		public override string ToString()
+		{
+            return $"Entity {id}";
+		}
+	}
+
+
+    // System
+    // The System processes entities that contain a specific signature
+
+    //Contents:
+    // 1: componentSignature
+    // 2: entities list
+    // 3: add entities to system if there's component match
+    // 4: remove entities from system
+    // 5: Require a component by setting it's bitset in the system to true
+    public class System
+    {
+        // Which components an entity must have for the system to consider the entity
+        private Signature componentSignature = ECSConstants.CreateSignature();
+
+        // list of all entities that the system is interested in
+        private List<Entity> entities = new List<Entity>();
+
+        public void AddEntityToSystem(Entity entity)
+        {
+            entities.Add(entity);
+        }
+
+        public void RemoveEntityFromSystem(Entity entity)
+        {
+            entities.RemoveAll(e => e == entity);
+        }
+
+        public List<Entity> GetSystemEntities() => entities;
+
+        public Signature GetComponentSignature() => componentSignature;
+
+        public void RequireComponent<TComponent>()
+        {
+            int componentId = Component<TComponent>.GetId();
+            componentSignature.Set(componentId, true);
+        }
+    }
+
+    public interface IPool
+    {
+        public void RemoveEntityFromPool(int entityId)
+        { }
+    }
+
+
+    // Pool 
+
+    public class Pool<T> : IPool where T : struct
+    {
+        private T[] data;
+        private int size;
+
+        private Dictionary<int, int> entityIdToIndex = new Dictionary<int, int>();
+        private Dictionary<int, int> indexToEntityId = new Dictionary<int, int>();
+
+        private int capacity;
+
+
+
+        public Pool(int initialCapacity = 100)
+        {
+            this.capacity = initialCapacity;
+            size = 0;
+            data = new T[capacity];
+        }
+
+		private void AddCapacity()
+		{
+            capacity *= 2;
+            T[] newData = new T[capacity];
+            Array.Copy(data, newData, size);
+            data = newData;
+		}
+
+
+		public void RemoveEntityFromPool(int entityId)
+        {
+            if (entityIdToIndex.ContainsKey(entityId))
+            {
+                Remove(entityId);
+            }
+        }
+
+        public bool IsEmpty() => size == 0;
+
+        public int GetSize() => size;
+
+
+
+
+
+        public void Clear()
+        {
+            Array.Clear(data, 0, size);
+
+            entityIdToIndex.Clear();
+            indexToEntityId.Clear();
+
+            size = 0;
+        }
+
+        public void Add(T component) 
+        {
+            if (size >= capacity)
+            {
+                AddCapacity();
+            }
+
+            data[size++] = component;
+        }
+
+        public void Set(int entityId, T component)
+        {
+            if (entityIdToIndex.TryGetValue(entityId, out var index)) 
+            {
+                data[index] = component;
+            }
+            else
+            {
+                if (size >= capacity)
+                {
+                    AddCapacity();
+                }
+
+                int newIndex = size;
+                entityIdToIndex[entityId] = newIndex;
+                indexToEntityId[size] = entityId;
+
+                data[size++] = component;
+               
+            }
+        }
+
+        public void Remove(int entityId)
+        {
+            if (!entityIdToIndex.TryGetValue(entityId, out int indexOfRemoved))
+            {
+                throw new InvalidOperationException($"Entity {entityId} does not exist in the pool");   
+            }
+
+            int indexOfLast = size - 1;
+            data[indexOfRemoved] = data[indexOfLast];
+
+            int entityIdOfLastElement = indexToEntityId[indexOfLast];
+            entityIdToIndex[entityIdOfLastElement] = indexOfRemoved;
+            indexToEntityId[indexOfRemoved] = entityIdOfLastElement;
+
+            entityIdToIndex.Remove(entityId);
+            indexToEntityId.Remove(indexOfLast);
+
+            data[indexOfLast] = default;
+
+            size--;
+        }
+
+        public ref T Get(int entityId)
+        {
+            if (!entityIdToIndex.TryGetValue(entityId, out int index))
+            {
+                throw new KeyNotFoundException($"Entity {entityId} does not have a component of type {typeof(T).Name}.");
+            }
+            return ref data[index]; 
+        }
+
+        public T this[int index]
+        {
+            get => data[index];
+            set => data[index] = value;
+        }
+    }
+
+
+    //Registry
+    //The registry manages the creation and destruction of entities, add systems, and components
+    public class Registry
+    {
+        private int numEntities = 0;
+
+        // List of component pools, each pool contains all the data for a certain component type
+        private List<IPool> componentPools = new List<IPool>();
+
+        private List<Signature?> entityComponentSignatures = new List<Signature?>();
+
+        private Dictionary<Type, System> systems = new Dictionary<Type, System>();
+
+        private HashSet<Entity> entitiesToBeAdded = new HashSet<Entity>();
+        private HashSet<Entity> entitiesToBeRemoved = new HashSet<Entity>();
+
+        private Dictionary<string, Entity?> entityPerTag = new Dictionary<string, Entity?>();
+        private Dictionary<int, string> tagPerEntity = new Dictionary<int, string>();
+
+        private Dictionary<string, HashSet<Entity?>> entitiesPerGroup = new Dictionary<string, HashSet<Entity?>>();
+        private Dictionary<int, string> groupPerEntity = new Dictionary<int, string>();
+
+        public void TagEntity(Entity entity, string tag)
+        {
+            entityPerTag[tag] = entity;
+            tagPerEntity[entity.GetId()] = tag;
+        }
+
+        public bool EntityHasTag(Entity? entity, string tag)
+        {
+            if (tagPerEntity[entity.GetId()] != null)
+            {
+                return false;
+            }
+
+            return entityPerTag[tag] == entity;
+        }
+
+        public Entity? GetEntityByTag(string tag)
+        {
+            return entityPerTag[tag]; 
+        }
+
+        public void RemoveEntityTag(Entity? entity)
+        {
+            if (!tagPerEntity.ContainsKey(entity.GetId()))
+                return;
+
+            var taggedEntity = tagPerEntity[entity.GetId()];
+            if (taggedEntity != null)
+            {
+                entityPerTag.Remove(taggedEntity); 
+                tagPerEntity.Remove(entity.GetId());
+            }
+        }
+
+        public void GroupEntity(Entity? entity, string group)
+        {
+            if (!entitiesPerGroup.TryGetValue(group, out var entityPerGroup))
+            {
+				entitiesPerGroup[group] = new HashSet<Entity?>();
+			}
+            
+            entitiesPerGroup[group].Add(entity);
+            groupPerEntity[entity.GetId()] = group;
+        }
+
+        public bool EntityBelongsToGroup(Entity? entity, string group)
+        {
+            if (entitiesPerGroup.TryGetValue(group, out var groupEntities))
+            {
+                return groupEntities.Contains(entity);
+            }
+
+            return false;
+        }
+
+        public HashSet<Entity?> GetEntitiesByGroup(string group)
+        {
+            return entitiesPerGroup[group];
+        }
+
+        public void RemoveEntityGroup(Entity? entity)
+        {
+            if (!groupPerEntity.ContainsKey(entity.GetId()))
+                 return; 
+
+            var groupedEntity = groupPerEntity[entity.GetId()];
+            if (groupedEntity != null)
+            {
+
+                var group = entitiesPerGroup[groupedEntity];
+
+                if (!group.Contains(entity))
+                    return;
+
+                if (group != null)
+                {
+                    var entityInGroup = group.FirstOrDefault(e => e == entity);
+                    
+                        group.Remove(entityInGroup);
+                    
+                }
+                groupPerEntity.Remove(entity.GetId());
+            }
+        }
+
+
+        private LinkedList<int>? freeIds = new LinkedList<int>();
+
+        public Entity CreateEntity()
+        {
+            int entityId;
+
+            if (freeIds?.Count == 0)
+            {
+				entityId = numEntities++;
+				if (entityId >= entityComponentSignatures.Count)
+				{
+					entityComponentSignatures.Add(ECSConstants.CreateSignature());
+				}
+
+
+			}
+			else
+			{
+				entityId = freeIds.First();
+				freeIds.RemoveFirst();
+			}
+
+
+			var entity = new Entity(entityId);
+			entity.registry = this;
+			entitiesToBeAdded.Add(entity);
+
+           
+
+            Logger.Info($"Entity created with id = {entityId}");
+
+
+
+            return entity;
+        }
+
+        public void RemoveEntity(Entity entity)
+        {
+            entitiesToBeRemoved.Add(entity);
+        }
+
+        public void Update()
+        {
+            foreach (var entity in entitiesToBeAdded)
+            {
+                AddEntityToSystems(entity);
+            }
+
+            entitiesToBeAdded.Clear();
+
+            foreach (var entity in entitiesToBeRemoved)
+            {
+                RemoveEntityFromSystems(entity);
+                freeIds?.AddLast(entity.GetId());
+                entityComponentSignatures[entity.GetId()]?.SetAll(false);
+
+                foreach (var pool in componentPools)
+                {
+                    pool?.RemoveEntityFromPool(entity.GetId());
+                }
+                
+                RemoveEntityTag(entity);
+                RemoveEntityGroup(entity);
+            }
+
+            entitiesToBeRemoved.Clear();
+
+           
+        }
+
+        public void AddComponent<TComponent>(Entity entity, TComponent component) where TComponent : struct
+        {
+            int componentId = Component<TComponent>.GetId();
+            int entityId = entity.GetId();
+
+            //If the component id is greater than the current size of the componentPools, then resize the vector
+            if (componentId >= componentPools.Count)
+            {
+                componentPools.AddRange(new IPool[componentId - componentPools.Count + 1]);
+            }
+
+            // If we still don't have a Pool for that component type
+            if (componentPools[componentId] == null)
+            {
+                componentPools[componentId] = new Pool<TComponent>();
+            }
+
+            //Get the pool of component values for that component type
+            var componentPool = (Pool<TComponent>)componentPools[componentId];
+
+            // If the entity id is greater than the current size of the component pool, then resize the pool
+            //if (entityId >= pool.GetSize())
+            //{
+            //    pool.Resize(numEntities);
+            //}
+
+            //add the new component to the component pool list, using the entity id as index
+            componentPool.Set(entityId, component);
+
+            // Finally, change the component signature of the entity and set the component id on the bitset to 1
+            entityComponentSignatures[entityId]?.Set(componentId, true);
+
+            Logger.Info($"Component id {componentId} was added to entity id {entityId}");
+
+        }
+
+        public void RemoveComponent<TComponent>(Entity entity) where TComponent : struct
+        {
+            int componentId = Component<TComponent>.GetId();
+            int entityId = entity.GetId();
+            
+
+			var pool = (Pool<TComponent>)componentPools[componentId];
+            pool.Remove(entityId);
+
+			entityComponentSignatures[entityId]?.Set(componentId, false);
+
+			Logger.Info($"Component id {componentId} was removed from entity id {entityId}");
+        }
+
+        public bool HasComponent<TComponent>(Entity entity) where TComponent : struct
+        {
+            int componentId = Component<TComponent>.GetId();
+            int entityId = entity.GetId();
+
+            return entityComponentSignatures[entityId]?[componentId] == true;
+        }
+
+        public ref TComponent GetComponent<TComponent>(Entity entity) where TComponent: struct
+        {
+            int componentId = Component<TComponent>.GetId();
+            var pool = (Pool<TComponent>)componentPools[componentId];
+            return ref pool.Get(entity.GetId());
+        }
+
+        public void AddSystem<TSystem>(TSystem system) where TSystem : System
+        {
+            systems[typeof(TSystem)] = system;
+        }
+
+        public void RemoveSystem<TSystem>()
+        {
+            System system = systems[typeof(TSystem)];
+            systems.Remove(system.GetType());
+        }
+
+		public TSystem? GetSystem<TSystem>() where TSystem : System
+		{
+			if (systems.TryGetValue(typeof(TSystem), out var system))
+			{
+				return system as TSystem;
+			}
+			return null;  // System not found
+		}
+
+		public void AddEntityToSystems(Entity entity)
+        {
+            int entityId = entity.GetId();
+
+            Signature? entityComponantSignature = entityComponentSignatures[entityId];
+
+            foreach (System system in systems.Values)
+            {
+                Signature systemComponentSignature = system.GetComponentSignature();
+
+                if (entityComponantSignature != null)
+                {
+                    Signature signatureResult = new Signature(entityComponantSignature).And(systemComponentSignature);
+
+                    bool isInterested = signatureResult.AreValuesEqual(systemComponentSignature);
+
+                    if (isInterested)
+                    {
+                        system.AddEntityToSystem(entity);
+                    }
+				}
+
+            }
+        }
+
+        public void RemoveEntityFromSystems(Entity entity)
+        {
+            foreach (var system in systems)
+            {
+                system.Value.RemoveEntityFromSystem(entity);
+            }
+        }
+
+
+	}
+
+
+}
