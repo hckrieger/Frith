@@ -21,7 +21,7 @@ namespace Frith.Systems
 
 
 
-        public void Draw(SpriteBatch spriteBatch, AssetStore assetStore, Rectangle camera)
+        public void Draw(SpriteBatch spriteBatch, AssetStore assetStore)
         {
 			foreach (var entity in GetSystemEntities())
 			{
@@ -43,8 +43,8 @@ namespace Frith.Systems
 
 					Rectangle destinationRectangle =
 						new Rectangle(
-							(int)transform.Position.X - camera.X, 
-							(int)transform.Position.Y - camera.Y,
+							(int)transform.Position.X, 
+							(int)transform.Position.Y,
 							(int)(sprite.Width * transform.Scale.X),
 							(int)(sprite.Height * transform.Scale.Y));
 

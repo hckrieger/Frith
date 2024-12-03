@@ -50,26 +50,39 @@ namespace Frith
             Logger.Info($"New texture added to the Asset Store with id {assetId}");
         }
 
-        public void AddFont(string assetId, string filePath)
-        {
-            SpriteFont? font = content?.Load<SpriteFont>(filePath);
-
-            fonts?.Add(assetId, font);
-
-         //   Logger.Info($"New font added to the Asset Store with id {}")
-        }
-
-        public Texture2D? GetTexture(string assetId)
-        {
+		public Texture2D? GetTexture(string assetId)
+		{
 			if (textures == null)
 				return null;
 
 			if (textures.TryGetValue(assetId, out Texture2D? texture))
 			{
-                return texture;
+				return texture;
 			}
 
-            return null;
+			return null;
 		}
+
+		public void AddFont(string assetId, string filePath)
+        {
+            SpriteFont? font = content?.Load<SpriteFont>(filePath);
+
+            fonts?.Add(assetId, font);
+
+            Logger.Info($"New font added to the Asset Store with id {assetId}");
+        }
+
+        public SpriteFont? GetFont(string assetId)
+        {
+            if (fonts == null)
+                return null;
+
+            if (fonts.TryGetValue(assetId,out SpriteFont? font))
+            {
+                return font;
+            }
+
+            return null;
+        }
     }
 }

@@ -1,22 +1,22 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\hunte\\source\\repos\\MonoGame\\libraries\\Frith\\",
+  "WorkspaceRootPath": "C:\\Users\\hckri\\source\\repos\\MonoGame\\libraries\\Frith\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{86EB0A27-C3EC-48B4-9471-89C38C705508}|Frith.csproj|c:\\users\\hunte\\source\\repos\\monogame\\libraries\\frith\\ecs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{86EB0A27-C3EC-48B4-9471-89C38C705508}|Frith.csproj|c:\\users\\hckri\\source\\repos\\monogame\\libraries\\frith\\ecs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{86EB0A27-C3EC-48B4-9471-89C38C705508}|Frith.csproj|solutionrelative:ecs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{86EB0A27-C3EC-48B4-9471-89C38C705508}|Frith.csproj|c:\\users\\hunte\\source\\repos\\monogame\\libraries\\frith\\extensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{86EB0A27-C3EC-48B4-9471-89C38C705508}|Frith.csproj|c:\\users\\hckri\\source\\repos\\monogame\\libraries\\frith\\extensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{86EB0A27-C3EC-48B4-9471-89C38C705508}|Frith.csproj|solutionrelative:extensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{86EB0A27-C3EC-48B4-9471-89C38C705508}|Frith.csproj|c:\\users\\hunte\\source\\repos\\monogame\\libraries\\frith\\engine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{86EB0A27-C3EC-48B4-9471-89C38C705508}|Frith.csproj|solutionrelative:engine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{86EB0A27-C3EC-48B4-9471-89C38C705508}|Frith.csproj|c:\\users\\hckri\\source\\repos\\monogame\\libraries\\frith\\logger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{86EB0A27-C3EC-48B4-9471-89C38C705508}|Frith.csproj|solutionrelative:logger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{86EB0A27-C3EC-48B4-9471-89C38C705508}|Frith.csproj|c:\\users\\hunte\\source\\repos\\monogame\\libraries\\frith\\logger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{86EB0A27-C3EC-48B4-9471-89C38C705508}|Frith.csproj|solutionrelative:logger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{86EB0A27-C3EC-48B4-9471-89C38C705508}|Frith.csproj|c:\\users\\hckri\\source\\repos\\monogame\\libraries\\frith\\engine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{86EB0A27-C3EC-48B4-9471-89C38C705508}|Frith.csproj|solutionrelative:engine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -32,11 +32,11 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "ECS.cs",
-              "DocumentMoniker": "C:\\Users\\hunte\\source\\repos\\MonoGame\\libraries\\Frith\\ECS.cs",
+              "DocumentMoniker": "C:\\Users\\hckri\\source\\repos\\MonoGame\\libraries\\Frith\\ECS.cs",
               "RelativeDocumentMoniker": "ECS.cs",
-              "ToolTip": "C:\\Users\\hunte\\source\\repos\\MonoGame\\libraries\\Frith\\ECS.cs",
+              "ToolTip": "C:\\Users\\hckri\\source\\repos\\MonoGame\\libraries\\Frith\\ECS.cs",
               "RelativeToolTip": "ECS.cs",
-              "ViewState": "AgIAADcBAAAAAAAAAAAAAEcBAABhAAAAAAAAAA==",
+              "ViewState": "AgIAABgBAAAAAAAAAAAUwEcBAAAvAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-10-12T22:01:11.668Z",
               "EditorCaption": ""
@@ -45,40 +45,41 @@
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "Extensions.cs",
-              "DocumentMoniker": "C:\\Users\\hunte\\source\\repos\\MonoGame\\libraries\\Frith\\Extensions.cs",
+              "DocumentMoniker": "C:\\Users\\hckri\\source\\repos\\MonoGame\\libraries\\Frith\\Extensions.cs",
               "RelativeDocumentMoniker": "Extensions.cs",
-              "ToolTip": "C:\\Users\\hunte\\source\\repos\\MonoGame\\libraries\\Frith\\Extensions.cs",
+              "ToolTip": "C:\\Users\\hckri\\source\\repos\\MonoGame\\libraries\\Frith\\Extensions.cs",
               "RelativeToolTip": "Extensions.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-12T22:00:37.883Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Logger.cs",
-              "DocumentMoniker": "C:\\Users\\hunte\\source\\repos\\MonoGame\\libraries\\Frith\\Logger.cs",
-              "RelativeDocumentMoniker": "Logger.cs",
-              "ToolTip": "C:\\Users\\hunte\\source\\repos\\MonoGame\\libraries\\Frith\\Logger.cs",
-              "RelativeToolTip": "Logger.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-09T23:22:38.888Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-12T22:00:37.883Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "Logger.cs",
+              "DocumentMoniker": "C:\\Users\\hckri\\source\\repos\\MonoGame\\libraries\\Frith\\Logger.cs",
+              "RelativeDocumentMoniker": "Logger.cs",
+              "ToolTip": "C:\\Users\\hckri\\source\\repos\\MonoGame\\libraries\\Frith\\Logger.cs",
+              "RelativeToolTip": "Logger.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-09T23:22:38.888Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "Engine.cs",
-              "DocumentMoniker": "C:\\Users\\hunte\\source\\repos\\MonoGame\\libraries\\Frith\\Engine.cs",
+              "DocumentMoniker": "C:\\Users\\hckri\\source\\repos\\MonoGame\\libraries\\Frith\\Engine.cs",
               "RelativeDocumentMoniker": "Engine.cs",
-              "ToolTip": "C:\\Users\\hunte\\source\\repos\\MonoGame\\libraries\\Frith\\Engine.cs",
+              "ToolTip": "C:\\Users\\hckri\\source\\repos\\MonoGame\\libraries\\Frith\\Engine.cs",
               "RelativeToolTip": "Engine.cs",
               "ViewState": "AgIAAD4AAAAAAAAAAAAwwHEAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-03T09:38:18.058Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-03T09:38:18.058Z"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
             }
           ]
         }

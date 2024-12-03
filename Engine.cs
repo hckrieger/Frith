@@ -16,12 +16,11 @@ namespace Frith
     public class Engine : Game
 	{
 		private GraphicsDeviceManager _graphics;
-		private SpriteBatch _spriteBatch;
-		protected SpriteBatch spriteBatch => _spriteBatch;
+		private SpriteBatch? _spriteBatch;
+		protected SpriteBatch? spriteBatch => _spriteBatch;
 
-		Texture2D texture;
 
-		private RenderTarget2D renderTarget;
+		private RenderTarget2D? renderTarget;
 
 		protected Point internalResolution;
 		protected Point screenSize;
@@ -31,7 +30,6 @@ namespace Frith
 		protected AssetStore assetStore;
 		protected bool isDebug;
 		protected EventBus eventBus;
-		protected Rectangle camera;
 
 		private KeyboardState currentKeyboardState, previousKeyboardState;
 
@@ -52,7 +50,6 @@ namespace Frith
 				UpdateRenderTarget();
 			};
 
-			
 
 			
 		}
@@ -67,7 +64,7 @@ namespace Frith
 			set
 			{
 				_graphics.IsFullScreen = value;
-				displayManager.SetScreenSize();
+				displayManager?.SetScreenSize();
 				
 			}
 		}
@@ -104,6 +101,7 @@ namespace Frith
 
 			AddServices();
 
+			SetResolution(720, 480);
 			
 			//UpdateRenderTarget();
 		}
@@ -112,7 +110,6 @@ namespace Frith
 		{
 
 			
-			texture = Content.Load<Texture2D>("batman");
 
 			// TODO: use this.Content to load your game content here
 		}
@@ -140,6 +137,8 @@ namespace Frith
 				Exit();
 
 			// TODO: Add your update logic here
+			registry.Update();
+
 
 			//	previousKeyboardState = Keyboard.GetState();
 
@@ -193,8 +192,8 @@ namespace Frith
 
 			_spriteBatch.Begin();
 
-			registry.GetSystem<RenderSystem>()?.Draw(_spriteBatch, assetStore, camera);
-			//_spriteBatch.Draw(texture, Vector2.Zero, Color.White);
+			registry.GetSystem<RenderSystem>()?.Draw(_spriteBatch, assetStore);
+			registry.GetSystem<RenderTextSystem>()?.Draw(_spriteBatch, assetStore);
 			_spriteBatch.End();
 
 			_graphics.GraphicsDevice.SetRenderTarget(null);
