@@ -10,52 +10,16 @@ namespace Frith.Components
 {
 	public struct SpriteComponent
 	{
-        private string assetId;
+        private int assetId;
 
-		private int width;
-        public int Width
-        {
-            get => width;
-            set => width = value;
-        }
 
-		private int height;
-        public int Height
-        {
-            get => height;
-            set => height = value;
-        }
+		public Rectangle Rectangle { get; set; }
 
-        private int srcRectX;
+		private int sourceIndex;
+        public int SourceIndex => sourceIndex;
 
-        public int SrcRectX
-        {
-            set
-            {
-                srcRectX = value;
-                sourceRectangle.X = srcRectX;
 
-            }
-        }
-
-        private int srcRectY;
-        public int SrcRectY
-        {
-            set
-            {
-                srcRectY = value;
-                sourceRectangle.Y = srcRectY;
-            }
-        }
-
-        private Rectangle sourceRectangle;
-        public Rectangle SourceRectangle
-        {
-            get => sourceRectangle;
-            set => sourceRectangle = value;
-        }
-
-        public string AssetId => assetId;
+        public int AssetId => assetId;
 
         private float layerDepth;
 
@@ -65,14 +29,11 @@ namespace Frith.Components
             set => layerDepth = value;
         }
 
-        public SpriteComponent(string assetId = "", int width = 0, int height = 0, float layerDepth = .5f, int srcRectX = 0, int srcRectY = 0)
+		public SpriteComponent(int assetId = default, float sourceIndex = 0, float layerDepth = .5f)
         {
+            Rectangle = Rectangle.Empty;
             this.assetId = assetId;
-            this.width = width;
-            this.height = height;
-            this.srcRectX = srcRectX;
             this.layerDepth = layerDepth;
-            this.sourceRectangle = new Rectangle(srcRectX, srcRectY, width, height);
         }
 
   

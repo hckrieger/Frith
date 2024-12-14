@@ -36,7 +36,7 @@ namespace Frith.Systems
 
                     animation.CurrentTime -= animation.FrameTime;
 
-                    sprite.SrcRectX = animation.CurrentFrame * sprite.Width;
+                   // sprite.SrcRectX = animation.CurrentFrame * sprite.Width;
                 }
 
 

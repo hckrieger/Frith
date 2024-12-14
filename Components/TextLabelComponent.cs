@@ -9,13 +9,6 @@ namespace Frith.Components
 {
 	public struct TextLabelComponent
 	{
-		private Vector2 position;
-
-		public Vector2 Position
-		{
-			get => position;
-			set => position = value;
-		}
 
 		private string text;
 
@@ -25,7 +18,12 @@ namespace Frith.Components
 			set => text = value;
 		}
 
-		private string assetId;
+		private int assetId;
+		public int AssetId
+		{
+			get => assetId;
+			set => assetId = value;
+		}
 
 		private Color color;
 
@@ -35,15 +33,12 @@ namespace Frith.Components
 			set => color = value;
 		}
 
-		private bool isFixed;
 
-		public TextLabelComponent(Vector2 position = default, string text = "", string assetId = "", Color color = default, bool isFixed = true)
+		public TextLabelComponent(string text = "", int assetId = default, Color color = default)
 		{
-			this.position = position;
 			this.text = text;
 			this.assetId = assetId;
 			this.color = color;
-			this.isFixed = isFixed;
 		}
 	}
 }

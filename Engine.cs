@@ -19,15 +19,22 @@ namespace Frith
 		private SpriteBatch? _spriteBatch;
 		protected SpriteBatch? spriteBatch => _spriteBatch;
 
+		//protected AssetStore<Texture2D> textureAssets;
+		//protected AssetStore<SpriteFont> TtfFontAssets;
 
 		private RenderTarget2D? renderTarget;
+		protected GraphicalAssetManager graphicalAssetManager;
 
 		protected Point internalResolution;
 		protected Point screenSize;
 
 		protected DisplayManager displayManager;
+		protected TextureManager textureManager;
+
+
 		protected Registry registry;
-		protected AssetStore assetStore;
+		
+		
 		protected bool isDebug;
 		protected EventBus eventBus;
 
@@ -38,7 +45,7 @@ namespace Frith
 			_graphics = new GraphicsDeviceManager(this);
 			
 			registry = new Registry();
-			assetStore = new AssetStore(Content);
+			//textureAssets = new AssetStore<Texture2D>(Content);
 			isDebug = false;
 			eventBus = new EventBus();	
 
@@ -51,7 +58,11 @@ namespace Frith
 			};
 
 
-			
+			displayManager = new DisplayManager(_graphics);
+
+			graphicalAssetManager = new GraphicalAssetManager(Content);
+			textureManager = new TextureManager();
+
 		}
 
 		protected bool isFullScreen
@@ -74,6 +85,7 @@ namespace Frith
 			if (renderTarget != null)
 			{
 				renderTarget.Dispose();
+				renderTarget = null;
 			}
 
 			renderTarget = new RenderTarget2D(GraphicsDevice, displayManager.InternalResolution.X, displayManager.InternalResolution.Y);
@@ -96,20 +108,19 @@ namespace Frith
 			// TODO: Add your initialization logic here
 
 			base.Initialize();
-			_spriteBatch = new SpriteBatch(GraphicsDevice);
-			displayManager = new DisplayManager(_graphics);
 
+			_spriteBatch = new SpriteBatch(GraphicsDevice);
 			AddServices();
 
 			SetResolution(720, 480);
 			
-			//UpdateRenderTarget();
+			UpdateRenderTarget();
 		}
 
 		protected override void LoadContent()
 		{
-
 			
+
 
 			// TODO: use this.Content to load your game content here
 		}
@@ -122,6 +133,9 @@ namespace Frith
 			{
 				{ typeof(DisplayManager), displayManager},
 				{ typeof(Registry), registry },
+				{ typeof(GraphicalAssetManager), graphicalAssetManager },
+				{ typeof(TextureManager), textureManager}
+
 			};
 
 			foreach (var service in addedServices.Values)
@@ -140,7 +154,7 @@ namespace Frith
 			registry.Update();
 
 
-			//	previousKeyboardState = Keyboard.GetState();
+				previousKeyboardState = Keyboard.GetState();
 
 			currentKeyboardState = Keyboard.GetState();
 
@@ -190,10 +204,16 @@ namespace Frith
 
 			GraphicsDevice.Clear(Color.Black);
 
+			if (_spriteBatch == null)
+			{
+				throw new Exception("Spritebatch cannot be null");
+			}
+				
+
 			_spriteBatch.Begin();
 
-			registry.GetSystem<RenderSystem>()?.Draw(_spriteBatch, assetStore);
-			registry.GetSystem<RenderTextSystem>()?.Draw(_spriteBatch, assetStore);
+			registry.GetSystem<RenderSystem>()?.Draw(_spriteBatch);
+			registry.GetSystem<RenderBmpTextSystem>()?.Draw(_spriteBatch);
 			_spriteBatch.End();
 
 			_graphics.GraphicsDevice.SetRenderTarget(null);

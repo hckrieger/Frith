@@ -1,4 +1,5 @@
 ﻿using Frith.Components;
+using Frith.Managers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -12,45 +13,40 @@ namespace Frith.Systems
 {
 	public class RenderSystem : System
 	{
+		private TextureManager textureManager;
+
         public RenderSystem(Game game)
         {
-            RequireComponent<TransformComponent>();
-            RequireComponent<SpriteComponent>();
-            
+
+        
+			textureManager = game.Services.GetService<TextureManager>();
         }
 
+		public void Initialize()
+		{
+			RequireComponent<TransformComponent>();
+			RequireComponent<SpriteComponent>();
+		}
 
 
-        public void Draw(SpriteBatch spriteBatch, AssetStore assetStore)
+
+        public void Draw(SpriteBatch spriteBatch)
         {
+			var textureCache = textureManager.GetAllTextureData();
+
 			foreach (var entity in GetSystemEntities())
 			{
 				TransformComponent transform = entity.GetComponent<TransformComponent>();
 				SpriteComponent sprite = entity.GetComponent<SpriteComponent>();
 
+		
+				TextureData? textureData = textureCache[entity.GetId()];
+
 				
 
-                Texture2D? texture = assetStore.GetTexture(sprite.AssetId);
-
-                if (texture != null)
-                {
-					if (sprite.Width == 0 && sprite.Height == 0)
-					{
-						sprite.Width = texture.Width;
-						sprite.Height = texture.Height;
-						sprite.SourceRectangle = new Rectangle(0, 0, sprite.Width, sprite.Height);
-					}
-
-					Rectangle destinationRectangle =
-						new Rectangle(
-							(int)transform.Position.X, 
-							(int)transform.Position.Y,
-							(int)(sprite.Width * transform.Scale.X),
-							(int)(sprite.Height * transform.Scale.Y));
-
-					spriteBatch.Draw(texture, destinationRectangle, sprite.SourceRectangle, Color.White, (float)transform.Rotation, Vector2.Zero, SpriteEffects.None, sprite.LayerDepth);
-
-				}
+				spriteBatch.Draw(textureData?.Texture, transform.Position, sprite.Rectangle, Color.White, (float)transform.Rotation, Vector2.Zero, transform.Scale, SpriteEffects.None, sprite.LayerDepth);
+			
+				
 
 			}
 

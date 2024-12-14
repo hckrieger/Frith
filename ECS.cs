@@ -1,4 +1,6 @@
 ﻿using Frith.Components;
+using Frith.Extensions;
+using Frith.Systems;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,7 +13,7 @@ using Signature = System.Collections.BitArray;
 
 namespace Frith
 {
-    public static class ECSConstants
+	public static class ECSConstants
     {
         public const int MAX_COMPONENTS = 32;
 
@@ -552,6 +554,14 @@ namespace Frith
         {
             System system = systems[typeof(TSystem)];
             systems.Remove(system.GetType());
+        }
+
+        public bool HasSystem<TSystem>() where TSystem : System
+        {
+            if (systems.ContainsKey(typeof(TSystem)))
+                return true;
+
+            else return false;
         }
 
 		public TSystem? GetSystem<TSystem>() where TSystem : System

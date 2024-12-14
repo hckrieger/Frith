@@ -26,33 +26,33 @@ namespace Frith.Systems
         }
 
         public void OnKeyPressed(KeyPressedEvent keyEvent) {
-            foreach (var entity in GetSystemEntities())
-            {
-                ref var keyboardControl = ref entity.GetComponent<KeyboardControlledComponent>();
-                ref var sprite = ref entity.GetComponent<SpriteComponent>();
-                ref var rigidbody = ref entity.GetComponent<RigidBodyComponent>();
+     //       foreach (var entity in GetSystemEntities())
+     //       {
+     //           ref var keyboardControl = ref entity.GetComponent<KeyboardControlledComponent>();
+     //           ref var sprite = ref entity.GetComponent<SpriteComponent>();
+     //           ref var rigidbody = ref entity.GetComponent<RigidBodyComponent>();
 
-                switch (keyEvent.Key)
-                {
-                    case Keys.Up:
-                        rigidbody.Velocity = keyboardControl.UpVelocity;
-                        sprite.SrcRectY = sprite.Height * 0;
-                        break;
-					case Keys.Right:
-						rigidbody.Velocity = keyboardControl.RightVelocity;
-						sprite.SrcRectY = sprite.Height * 1;
-						break;
-					case Keys.Down:
-                        rigidbody.Velocity = keyboardControl.DownVelocity;
-                        sprite.SrcRectY = sprite.Height * 2;
-                        break;
-                    case Keys.Left:
-                        rigidbody.Velocity = keyboardControl.LeftVelocity;
-						sprite.SrcRectY = sprite.Height * 3;
-						break;
+     //           switch (keyEvent.Key)
+     //           {
+     //               case Keys.Up:
+     //                   rigidbody.Velocity = keyboardControl.UpVelocity;
+     //                   sprite.SrcRectY = sprite.Height * 0;
+     //                   break;
+					//case Keys.Right:
+					//	rigidbody.Velocity = keyboardControl.RightVelocity;
+					//	sprite.SrcRectY = sprite.Height * 1;
+					//	break;
+					//case Keys.Down:
+     //                   rigidbody.Velocity = keyboardControl.DownVelocity;
+     //                   sprite.SrcRectY = sprite.Height * 2;
+     //                   break;
+     //               case Keys.Left:
+     //                   rigidbody.Velocity = keyboardControl.LeftVelocity;
+					//	sprite.SrcRectY = sprite.Height * 3;
+					//	break;
 
-                }
-            }
+     //           }
+     //       }
         }
 
         public void Update()

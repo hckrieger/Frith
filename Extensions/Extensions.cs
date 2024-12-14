@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Frith
+namespace Frith.Extensions
 {
 	public static class BitArrayExtensions
 	{
