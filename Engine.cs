@@ -31,8 +31,9 @@ namespace Frith
 		protected DisplayManager displayManager;
 		protected TextureManager textureManager;
 
-
 		protected Registry registry;
+
+		protected InputManager inputManager;
 		
 		
 		protected bool isDebug;
@@ -110,6 +111,13 @@ namespace Frith
 			base.Initialize();
 
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
+
+
+			inputManager = new InputManager(this, displayManager);
+
+			
+			Components.Add(inputManager);
+
 			AddServices();
 
 			SetResolution(720, 480);
@@ -134,7 +142,8 @@ namespace Frith
 				{ typeof(DisplayManager), displayManager},
 				{ typeof(Registry), registry },
 				{ typeof(GraphicalAssetManager), graphicalAssetManager },
-				{ typeof(TextureManager), textureManager}
+				{ typeof(TextureManager), textureManager },
+				{ typeof(InputManager), new InputManager(this, displayManager) },
 
 			};
 
@@ -172,22 +181,22 @@ namespace Frith
 
 			
 
-			foreach (var key in currentKeyboardState.GetPressedKeys())
-			{
+			//foreach (var key in currentKeyboardState.GetPressedKeys())
+			//{
 				
-				if (currentKeyboardState.IsKeyDown(key) && !previousKeyboardState.IsKeyDown(key))
-				{
+			//	if (currentKeyboardState.IsKeyDown(key) && !previousKeyboardState.IsKeyDown(key))
+			//	{
 
-					var eventKey = $"{key}";
+			//		var eventKey = $"{key}";
 
-					if (!eventBus.EventCache.TryGetValue(eventKey, out Event? keyboardEvent))
-					{
-						keyboardEvent = new KeyPressedEvent(key);
-						eventBus.EventCache[eventKey] = keyboardEvent;
-					}
-					eventBus.EmitEvent(eventBus.EventCache[eventKey]);
-				}
-			}
+			//		if (!eventBus.EventCache.TryGetValue(eventKey, out Event? keyboardEvent))
+			//		{
+			//			keyboardEvent = new KeyPressedEvent(key);
+			//			eventBus.EventCache[eventKey] = keyboardEvent;
+			//		}
+			//		eventBus.EmitEvent(eventBus.EventCache[eventKey]);
+			//	}
+			//}
 
 			previousKeyboardState = currentKeyboardState;
 			
@@ -212,8 +221,12 @@ namespace Frith
 
 			_spriteBatch.Begin();
 
-			registry.GetSystem<RenderSystem>()?.Draw(_spriteBatch);
-			registry.GetSystem<RenderBmpTextSystem>()?.Draw(_spriteBatch);
+			if (registry.HasSystem<RenderSystem>())
+				registry.GetSystem<RenderSystem>()?.Draw(_spriteBatch);
+			
+			if (registry.HasSystem<RenderBmpTextSystem>())
+				registry.GetSystem<RenderBmpTextSystem>()?.Draw(_spriteBatch);
+
 			_spriteBatch.End();
 
 			_graphics.GraphicsDevice.SetRenderTarget(null);

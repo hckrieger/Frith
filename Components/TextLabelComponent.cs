@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,10 +13,27 @@ namespace Frith.Components
 
 		private string text;
 
+		private char[] textCharacters;
+
+		public char[] TextCharacters => textCharacters;
+
 		public string Text
 		{
 			get => text;
-			set => text = value;
+			set
+			{
+				if (value == text)
+					return;
+
+				text = value;
+				
+				if (textCharacters == null || textCharacters.Length != text.Length)
+				{
+					textCharacters = new char[text.Length];
+				}
+
+				text.CopyTo(0, textCharacters, 0, text.Length);
+			}
 		}
 
 		private int assetId;
@@ -36,9 +54,11 @@ namespace Frith.Components
 
 		public TextLabelComponent(string text = "", int assetId = default, Color color = default)
 		{
+			textCharacters = text.ToCharArray();
 			this.text = text;
 			this.assetId = assetId;
 			this.color = color;
 		}
+
 	}
 }

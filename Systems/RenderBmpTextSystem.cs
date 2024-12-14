@@ -15,7 +15,6 @@ namespace Frith.Systems
 	public class RenderBmpTextSystem : System
 	{
 		private TextureManager textureManager;
-		private char[] chars;
 		public RenderBmpTextSystem(Game game) 
 		{
 			RequireComponent<TransformComponent>();
@@ -41,22 +40,16 @@ namespace Frith.Systems
 				TextureData? textureData = textureCache[textLabel.AssetId];
 
 
-			
-				if (chars == null)
-					chars = textLabel.Text.ToCharArray();
-
-
-
 				for (int i = 0; i < textLabel.Text.Length; i++)
 				{
-					int index = chars[i] - 32;
+					int index = textLabel.TextCharacters[i] - 32;
 
 
 					
 					xPositionShift += textureData.FrameSize.X;
 					
 
-					if (chars[i] == '\n')
+					if (textLabel.TextCharacters[i] == '\n')
 					{
 						xPositionShift = 0;
 						yPositionShift = textureData.FrameSize.Y + (textureData.FrameSize.Y / 8);	

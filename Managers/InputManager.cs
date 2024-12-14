@@ -11,12 +11,19 @@ namespace Frith.Managers
 	public class InputManager : GameComponent
 	{
 
-		private MouseState previousMouseState, currentMouseState;
+		private MouseState previousMouseState;
+		private MouseState currentMouseState;
 
+		public MouseState PreviousMouseState => previousMouseState;
 
-		public InputManager(Game game) : base(game) 
+		public KeyboardState previousKeyboardState;
+		private KeyboardState currentKeyboardState;
+
+		private DisplayManager displayerManager;
+
+		public InputManager(Game game, DisplayManager displayManager) : base(game) 
 		{
-			
+			this.displayerManager = displayManager;
 		}
 
 		public override void Update(GameTime gameTime)
@@ -25,38 +32,40 @@ namespace Frith.Managers
 
 			previousMouseState = currentMouseState;
 			currentMouseState = Mouse.GetState();
-			
+
+			previousKeyboardState = currentKeyboardState;
+			currentKeyboardState = Keyboard.GetState();
+
+		}
+
+		public bool KeyJustDown(Keys key)
+		{
+			return (previousKeyboardState.IsKeyUp(key) && currentKeyboardState.IsKeyDown(key));	
+		}
+
+		public bool KeyHeld(Keys key)
+		{
+			return currentKeyboardState.IsKeyDown(key);
 		}
 
 		public bool MouseButtonJustDown()
 		{
-			if (previousMouseState.LeftButton == ButtonState.Released && currentMouseState.LeftButton == ButtonState.Pressed)
-			{
-				return true;
-			}
+			return (previousMouseState.LeftButton == ButtonState.Released) &&
+				   (currentMouseState.LeftButton == ButtonState.Pressed);
 
-			return false;	
 		}
 
 		public bool MouseButtonHeld()
 		{
-			if (currentMouseState.LeftButton == ButtonState.Pressed)
-			{
-				return true;
-			}
-
-			return false;
+			return currentMouseState.LeftButton == ButtonState.Pressed;
 		}
 
 
-		public Point MousePositionPoint()
-		{
-			return currentMouseState.Position;
-		}
+	
 
-		public Vector2 MousePositionVector()
+		public Vector2 MousePosition()
 		{
-			return new Vector2(currentMouseState.X, currentMouseState.Y);
+			return displayerManager.ScreenToViewport(currentMouseState.Position.ToVector2());
 		}
 	}
 }
