@@ -17,33 +17,28 @@ namespace Frith.Systems
 
         public RenderSystem(Game game)
         {
+			RequireComponent<TransformComponent>();
+			RequireComponent<SpriteComponent>();
 
-        
 			textureManager = game.Services.GetService<TextureManager>();
         }
 
-		public void Initialize()
-		{
-			RequireComponent<TransformComponent>();
-			RequireComponent<SpriteComponent>();
-		}
+		
 
 
-
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
 			var textureCache = textureManager.GetAllTextureData();
 
 			foreach (var entity in GetSystemEntities())
 			{
-				TransformComponent transform = entity.GetComponent<TransformComponent>();
-				SpriteComponent sprite = entity.GetComponent<SpriteComponent>();
+				ref TransformComponent transform = ref entity.GetComponent<TransformComponent>();
+				ref SpriteComponent sprite = ref entity.GetComponent<SpriteComponent>();
 
 		
 				TextureData? textureData = textureCache[entity.GetId()];
 
 				
-
 				spriteBatch.Draw(textureData?.Texture, transform.Position, sprite.Rectangle, Color.White, (float)transform.Rotation, Vector2.Zero, transform.Scale, SpriteEffects.None, sprite.LayerDepth);
 			
 				

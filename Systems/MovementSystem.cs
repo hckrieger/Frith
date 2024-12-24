@@ -17,7 +17,7 @@ namespace Frith.Systems
             RequireComponent<RigidBodyComponent>();
         }
 
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             foreach (var entity in GetSystemEntities())
             {

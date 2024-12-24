@@ -1,11 +1,14 @@
-﻿using Frith.Components;
+﻿//using Frith.Components;
 using Frith.Extensions;
 using Frith.Systems;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Signature = System.Collections.BitArray;
@@ -52,10 +55,26 @@ namespace Frith
     {
         private int id;
 
+        public enum LifeCycle
+        {
+            Persistant,
+            Volatile,
+            Isolated,
+            Reserved
+        }
+
+        public int SceneId { get; set; }
+
+		public Registry registry;
+
+        public LifeCycle EntityLifeCycle { get; set; } = LifeCycle.Isolated;
+
         public Entity(int id)
         {
             this.id = id;
         }
+
+
 
         public void RemoveSelf()
         {
@@ -65,13 +84,13 @@ namespace Frith
         public int GetId() => id;
 
 
-        public static bool operator ==(Entity a, Entity b) => a.id == b.id;
-        public static bool operator !=(Entity a, Entity b) => a.id != b.id;
-        public static bool operator >(Entity a, Entity b) => a.id > b.id;
-        public static bool operator <(Entity a, Entity b) => a.id < b.id;
+        //public static bool operator ==(Entity a, Entity b) => a.id == b.id;
+        //public static bool operator !=(Entity a, Entity b) => a.id != b.id;
+        //public static bool operator >(Entity a, Entity b) => a.id > b.id;
+        //public static bool operator <(Entity a, Entity b) => a.id < b.id;
 
 
-        public Registry registry;
+        
 
         public override bool Equals(object? obj)
         {
@@ -81,8 +100,11 @@ namespace Frith
         public override int GetHashCode() => id.GetHashCode();
 
         public void AddComponent<TComponent>(TComponent component) where TComponent : struct
-        {
-            registry.AddComponent(this, component);
+        {   
+            if (!HasComponent<TComponent>())
+                registry.AddComponent(this, component);
+
+            return;
         }
 
         public void RemoveComponent<TComponent>() where TComponent: struct
@@ -166,6 +188,12 @@ namespace Frith
             int componentId = Component<TComponent>.GetId();
             componentSignature.Set(componentId, true);
         }
+
+        public virtual void Initialize() { }
+
+        public virtual void Update(GameTime gameTime) { }
+
+        public virtual void Draw(SpriteBatch spriteBatch) { }
     }
 
     public interface IPool
@@ -324,6 +352,44 @@ namespace Frith
         private Dictionary<string, HashSet<Entity?>> entitiesPerGroup = new Dictionary<string, HashSet<Entity?>>();
         private Dictionary<int, string> groupPerEntity = new Dictionary<int, string>();
 
+        private HashSet<Entity> allEntities = new HashSet<Entity>();
+
+        public HashSet<Entity> GetAllEntities => allEntities;
+
+        public HashSet<Entity> reservedEntities = new HashSet<Entity>();
+
+		public void ReserveEntity(Entity entity)
+        {
+            
+            reservedEntities.Add(entity);
+            RemoveEntityFromSystems(entity);
+
+           
+        }
+
+        public void ReassignReservedEntity(Entity entity, int sceneId)
+        {
+            reservedEntities.Remove(entity);
+            AddEntityToSystems(entity);
+            entity.SceneId = sceneId;
+        }
+
+		public void ReassignReservedEntity(Entity entity, Scene scene)
+		{
+			reservedEntities.Remove(entity);
+			AddEntityToSystems(entity);
+			entity.SceneId = scene.GetId;
+            entity.EntityLifeCycle = Entity.LifeCycle.Isolated;
+		}
+
+		public HashSet<System> GetAllSystems()
+        {
+            return systems.Values.ToHashSet();
+        }
+
+        
+
+
         public void TagEntity(Entity entity, string tag)
         {
             entityPerTag[tag] = entity;
@@ -412,7 +478,7 @@ namespace Frith
 
         private LinkedList<int>? freeIds = new LinkedList<int>();
 
-        public Entity CreateEntity()
+        public Entity CreateEntity(Scene associatedScene)
         {
             int entityId;
 
@@ -423,8 +489,6 @@ namespace Frith
 				{
 					entityComponentSignatures.Add(ECSConstants.CreateSignature());
 				}
-
-
 			}
 			else
 			{
@@ -437,7 +501,9 @@ namespace Frith
 			entity.registry = this;
 			entitiesToBeAdded.Add(entity);
 
-           
+            entity.SceneId = associatedScene.GetId;
+
+            allEntities.Add(entity);
 
             Logger.Info($"Entity created with id = {entityId}");
 

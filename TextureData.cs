@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,7 +11,7 @@ namespace Frith
 {
 	public class TextureData
 	{
-		public int AssetId { get; set; }	
+		public int TextureId { get; set; }	
 		public Texture2D Texture { get; set; }
 
 		public int Width => Texture.Width;
@@ -26,7 +27,7 @@ namespace Frith
 		public TextureData(Texture2D texture, Point frameSize = default)
 		{
  
-			AssetId = default;
+			TextureId = default;
 			Texture = texture;
 
 			if (frameSize == default)
@@ -42,8 +43,23 @@ namespace Frith
 			int rowIndex = index / Columns;
 			int columnIndex = index % Columns;
 
+			if (rowIndex < 0 || rowIndex >= Rows || columnIndex < 0 || columnIndex >= Columns)
+			{
+				throw new IndexOutOfRangeException($"The index {index} is out of range of the number of texture frames");
+			}
+
 			return new Rectangle(columnIndex * FrameSize.X, rowIndex * FrameSize.Y, FrameSize.X, FrameSize.Y);
 
+		}
+
+		public Rectangle GetTextureFrame(Point point)
+		{
+			if (point.Y < 0 || point.Y >= Rows || point.X < 0 || point.X >= Columns)
+			{
+				throw new IndexOutOfRangeException($"The sprite sheet position ({point.X}, {point.Y}) is out of range of the number of texture frames");
+			}
+
+			return new Rectangle(point.X * FrameSize.X, point.Y * FrameSize.Y, FrameSize.X, FrameSize.Y);
 		}
 	}
 }

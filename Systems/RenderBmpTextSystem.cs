@@ -27,32 +27,33 @@ namespace Frith.Systems
 	
 
 
-		public void Draw(SpriteBatch spriteBatch)
+		public override void Draw(SpriteBatch spriteBatch)
 		{
 			var textureCache = textureManager.GetAllTextureData();
-			int xPositionShift = 0;
-			int yPositionShift = 0;
+
 			foreach (var entity in GetSystemEntities())
 			{
-				TransformComponent transform = entity.GetComponent<TransformComponent>();
-				TextLabelComponent textLabel = entity.GetComponent<TextLabelComponent>();
+				ref TransformComponent transform = ref entity.GetComponent<TransformComponent>();
+				ref TextLabelComponent textLabel = ref entity.GetComponent<TextLabelComponent>();
 
-				TextureData? textureData = textureCache[textLabel.AssetId];
-
+				TextureData? textureData = textureCache[textLabel.TextureId];
+				int xPositionShift = 0;
+				int yPositionShift = 0;
 
 				for (int i = 0; i < textLabel.Text.Length; i++)
 				{
 					int index = textLabel.TextCharacters[i] - 32;
 
 
-					
-					xPositionShift += textureData.FrameSize.X;
+					if (textureData != null)
+						xPositionShift += textureData.FrameSize.X;
 					
 
-					if (textLabel.TextCharacters[i] == '\n')
+					if (textLabel.TextCharacters[i] == '\n' && textureData != null)
 					{
 						xPositionShift = 0;
-						yPositionShift = textureData.FrameSize.Y + (textureData.FrameSize.Y / 8);	
+						yPositionShift = textureData.FrameSize.Y + (textureData.FrameSize.Y / 8);
+						continue;
 					}
 					
 

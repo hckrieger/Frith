@@ -20,7 +20,7 @@ namespace Frith.Managers
 		{
 			if (textureDataDictionary.TryAdd(textureDataKey, textureDataValue))
 			{
-				textureDataValue.AssetId = textureDataKey;
+				textureDataValue.TextureId = textureDataKey;
 			}
 		}
 

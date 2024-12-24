@@ -36,11 +36,11 @@ namespace Frith.Components
 			}
 		}
 
-		private int assetId;
-		public int AssetId
+		private int textureId;
+		public int TextureId
 		{
-			get => assetId;
-			set => assetId = value;
+			get => textureId;
+			set => textureId = value;
 		}
 
 		private Color color;
@@ -52,11 +52,11 @@ namespace Frith.Components
 		}
 
 
-		public TextLabelComponent(string text = "", int assetId = default, Color color = default)
+		public TextLabelComponent(string text = "", int textureId = default, Color color = default)
 		{
 			textCharacters = text.ToCharArray();
 			this.text = text;
-			this.assetId = assetId;
+			this.textureId = textureId;
 			this.color = color;
 		}
 

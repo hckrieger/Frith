@@ -1,0 +1,4 @@
+﻿A list of potential optmizations to do when demands of a game require them
+
+1. Can separate further text sprite related functionality into a separate TextData file where the string and other methods go and connect it to the text component with an id
+2. prefilter active entities on scene transition

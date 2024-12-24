@@ -10,14 +10,14 @@ using Frith.Systems;
 using System.Diagnostics;
 using Frith.Events;
 using Frith.Managers;
+using System.Runtime.CompilerServices;
 
 namespace Frith
 {
     public class Engine : Game
 	{
 		private GraphicsDeviceManager _graphics;
-		private SpriteBatch? _spriteBatch;
-		protected SpriteBatch? spriteBatch => _spriteBatch;
+		protected SpriteBatch? _spriteBatch;
 
 		//protected AssetStore<Texture2D> textureAssets;
 		//protected AssetStore<SpriteFont> TtfFontAssets;
@@ -31,7 +31,7 @@ namespace Frith
 		protected DisplayManager displayManager;
 		protected TextureManager textureManager;
 
-		protected Registry registry;
+		protected SceneManager sceneManager;
 
 		protected InputManager inputManager;
 		
@@ -45,7 +45,6 @@ namespace Frith
         {
 			_graphics = new GraphicsDeviceManager(this);
 			
-			registry = new Registry();
 			//textureAssets = new AssetStore<Texture2D>(Content);
 			isDebug = false;
 			eventBus = new EventBus();	
@@ -60,6 +59,9 @@ namespace Frith
 
 
 			displayManager = new DisplayManager(_graphics);
+
+
+			
 
 			graphicalAssetManager = new GraphicalAssetManager(Content);
 			textureManager = new TextureManager();
@@ -107,31 +109,23 @@ namespace Frith
 		protected override void Initialize()
 		{
 			// TODO: Add your initialization logic here
-
-			base.Initialize();
-
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
 
-
 			inputManager = new InputManager(this, displayManager);
+			sceneManager = new SceneManager(_spriteBatch, this);
 
-			
 			Components.Add(inputManager);
+			Components.Add(sceneManager);
 
 			AddServices();
 
 			SetResolution(720, 480);
 			
 			UpdateRenderTarget();
+
+			base.Initialize();
 		}
 
-		protected override void LoadContent()
-		{
-			
-
-
-			// TODO: use this.Content to load your game content here
-		}
 
 		
 
@@ -140,10 +134,10 @@ namespace Frith
 			Dictionary<Type, object> addedServices = new Dictionary<Type, object>
 			{
 				{ typeof(DisplayManager), displayManager},
-				{ typeof(Registry), registry },
 				{ typeof(GraphicalAssetManager), graphicalAssetManager },
 				{ typeof(TextureManager), textureManager },
-				{ typeof(InputManager), new InputManager(this, displayManager) },
+				{ typeof(InputManager), inputManager },
+				{ typeof(SceneManager), sceneManager },	
 
 			};
 
@@ -160,53 +154,18 @@ namespace Frith
 				Exit();
 
 			// TODO: Add your update logic here
-			registry.Update();
+			Globals<Registry>.Instance().Update();
 
 
-				previousKeyboardState = Keyboard.GetState();
+			base.Update(gameTime);
 
-			currentKeyboardState = Keyboard.GetState();
-
-			if (currentKeyboardState.IsKeyDown(Keys.Tab) && !previousKeyboardState.IsKeyDown(Keys.Tab))
-			{
-				isDebug = !isDebug;
-
-				if (isDebug)
-					Logger.Info("Debugger is turned on");
-				else
-					Logger.Info("Debugger is off");
-
-
-			}
-
-			
-
-			//foreach (var key in currentKeyboardState.GetPressedKeys())
-			//{
-				
-			//	if (currentKeyboardState.IsKeyDown(key) && !previousKeyboardState.IsKeyDown(key))
-			//	{
-
-			//		var eventKey = $"{key}";
-
-			//		if (!eventBus.EventCache.TryGetValue(eventKey, out Event? keyboardEvent))
-			//		{
-			//			keyboardEvent = new KeyPressedEvent(key);
-			//			eventBus.EventCache[eventKey] = keyboardEvent;
-			//		}
-			//		eventBus.EmitEvent(eventBus.EventCache[eventKey]);
-			//	}
-			//}
 
 			previousKeyboardState = currentKeyboardState;
 			
-
-			base.Update(gameTime);
 		}
 
 		protected override void Draw(GameTime gameTime)
 		{
-			GraphicsDevice.Clear(Color.CornflowerBlue);
 
 
 			_graphics.GraphicsDevice.SetRenderTarget(renderTarget);
@@ -221,11 +180,12 @@ namespace Frith
 
 			_spriteBatch.Begin();
 
-			if (registry.HasSystem<RenderSystem>())
-				registry.GetSystem<RenderSystem>()?.Draw(_spriteBatch);
 			
-			if (registry.HasSystem<RenderBmpTextSystem>())
-				registry.GetSystem<RenderBmpTextSystem>()?.Draw(_spriteBatch);
+
+				base.Draw(gameTime);
+
+			//Globals<Registry>.Instance().GetSystem<RenderSystem>();
+			//Globals<Registry>.Instance().GetSystem<RenderBmpTextSystem>();
 
 			_spriteBatch.End();
 
@@ -236,7 +196,6 @@ namespace Frith
 			_spriteBatch.Draw(renderTarget, displayManager.DestinationRectangle, Color.White);
 			_spriteBatch.End();
 
-			base.Draw(gameTime);
 		}
 	}
 }
