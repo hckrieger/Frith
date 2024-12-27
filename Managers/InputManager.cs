@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Frith.Managers
 {
-	public class InputManager : GameComponent
+	public class InputManager(Game game, DisplayManager? displayManager) : GameComponent(game)
 	{
 
 		private MouseState previousMouseState;
@@ -16,15 +16,8 @@ namespace Frith.Managers
 
 		public MouseState PreviousMouseState => previousMouseState;
 
-		public KeyboardState previousKeyboardState;
+		private KeyboardState previousKeyboardState;
 		private KeyboardState currentKeyboardState;
-
-		private DisplayManager displayerManager;
-
-		public InputManager(Game game, DisplayManager displayManager) : base(game) 
-		{
-			this.displayerManager = displayManager;
-		}
 
 		public override void Update(GameTime gameTime)
 		{
@@ -65,7 +58,7 @@ namespace Frith.Managers
 
 		public Vector2 MousePosition()
 		{
-			return displayerManager.ScreenToViewport(currentMouseState.Position.ToVector2());
+			return displayManager.ScreenToViewport(currentMouseState.Position.ToVector2());
 		}
 	}
 }

@@ -9,7 +9,7 @@ namespace Frith.Managers
 {
 	public class TextureManager
 	{
-		private Dictionary<int, TextureData?> textureDataDictionary = new Dictionary<int, TextureData?>();	
+		private readonly Dictionary<int, TextureData?> textureDataDictionary = new Dictionary<int, TextureData?>();	
 
 		public Dictionary<int, TextureData?> GetAllTextureData()
 		{
@@ -26,24 +26,16 @@ namespace Frith.Managers
 
 		public TextureData? GetTextureData(int textureDataKey)
 		{
-			if (textureDataDictionary.TryGetValue(textureDataKey, out TextureData? textureDataValue))
-			{
-				return textureDataValue;
-			}
-
-			return null;
+			return textureDataDictionary.GetValueOrDefault(textureDataKey);
 		}
 
 		public void RemoveTextureData(int textureDataKey)
 		{
-			if (textureDataDictionary.ContainsKey(textureDataKey))
-			{
-				textureDataDictionary.Remove(textureDataKey);
-			} else
-			{
-				Logger.Error($"The texture data value of {textureDataKey} doesn't exists");
-			}
-		}
+            if (!textureDataDictionary.Remove(textureDataKey))
+            {
+                Logger.Error($"The texture data value of {textureDataKey} doesn't exists");
+            }
+        }
 
 		
 

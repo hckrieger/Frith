@@ -16,68 +16,56 @@ namespace Frith
 {
     public class Engine : Game
 	{
-		private GraphicsDeviceManager _graphics;
-		protected SpriteBatch? _spriteBatch;
+		private readonly GraphicsDeviceManager graphics;
+		private SpriteBatch? spriteBatch;
 
 		//protected AssetStore<Texture2D> textureAssets;
 		//protected AssetStore<SpriteFont> TtfFontAssets;
 
 		private RenderTarget2D? renderTarget;
-		protected GraphicalAssetManager graphicalAssetManager;
+		private readonly GraphicalAssetManager? graphicalAssetManager;
 
-		protected Point internalResolution;
-		protected Point screenSize;
+		// protected Point internalResolution;
+		// protected Point screenSize;
 
-		protected DisplayManager displayManager;
-		protected TextureManager textureManager;
+		private DisplayManager? displayManager;
+		private readonly TextureManager? textureManager;
 
-		protected SceneManager sceneManager;
+		private SceneManager? sceneManager;
 
-		protected InputManager inputManager;
+		private InputManager? inputManager;
 		
 		
-		protected bool isDebug;
-		protected EventBus eventBus;
 
-		private KeyboardState currentKeyboardState, previousKeyboardState;
 
-        public Engine()
+		protected Engine()
         {
-			_graphics = new GraphicsDeviceManager(this);
+			graphics = new GraphicsDeviceManager(this);
 			
-			//textureAssets = new AssetStore<Texture2D>(Content);
-			isDebug = false;
-			eventBus = new EventBus();	
+			graphicalAssetManager = new GraphicalAssetManager(Content);
+			textureManager = new TextureManager();
+
+			
+		
 
 			Content.RootDirectory = "Content";
 			IsMouseVisible = true;
 
-			_graphics.DeviceResetting += (sender, e) =>
+			graphics.DeviceResetting += (sender, e) =>
 			{
 				UpdateRenderTarget();
 			};
 
 
-			displayManager = new DisplayManager(_graphics);
-
-
-			
-
-			graphicalAssetManager = new GraphicalAssetManager(Content);
-			textureManager = new TextureManager();
-
 		}
 
 		protected bool isFullScreen
 		{
-			get
-			{
-				return _graphics.IsFullScreen;
-			}
+			get => graphics.IsFullScreen;
 
 			set
 			{
-				_graphics.IsFullScreen = value;
+				graphics.IsFullScreen = value;
 				displayManager?.SetScreenSize();
 				
 			}
@@ -91,28 +79,33 @@ namespace Frith
 				renderTarget = null;
 			}
 
-			renderTarget = new RenderTarget2D(GraphicsDevice, displayManager.InternalResolution.X, displayManager.InternalResolution.Y);
+			if (displayManager != null)
+				renderTarget = new RenderTarget2D(GraphicsDevice, displayManager.InternalResolution.X,
+					displayManager.InternalResolution.Y);
 		}
 
 		protected void SetResolution(int resolutionWidth, int resolutionHeight, float scale = 1)
 		{
-			displayManager.InternalResolution = new Point(resolutionWidth, resolutionHeight);
+			if (displayManager != null)
+			{
+				displayManager.InternalResolution = new Point(resolutionWidth, resolutionHeight);
 
-			float width = resolutionWidth * scale;
-			float height = resolutionHeight * scale;
+				var width = resolutionWidth * scale;
+				var height = resolutionHeight * scale;
 
-			displayManager.WindowSize = new Point((int)width, (int)height);
+				displayManager.WindowSize = new Point((int)width, (int)height);
+			}
 
-				UpdateRenderTarget();
+			UpdateRenderTarget();
 		}
 
 		protected override void Initialize()
 		{
 			// TODO: Add your initialization logic here
-			_spriteBatch = new SpriteBatch(GraphicsDevice);
-
+			spriteBatch = new SpriteBatch(GraphicsDevice);
+			displayManager = new DisplayManager(graphics);
 			inputManager = new InputManager(this, displayManager);
-			sceneManager = new SceneManager(_spriteBatch, this);
+			sceneManager = new SceneManager(spriteBatch, this);
 
 			Components.Add(inputManager);
 			Components.Add(sceneManager);
@@ -131,7 +124,7 @@ namespace Frith
 
 		private void AddServices()
 		{
-			Dictionary<Type, object> addedServices = new Dictionary<Type, object>
+			var addedServices = new Dictionary<Type, object?>
 			{
 				{ typeof(DisplayManager), displayManager},
 				{ typeof(GraphicalAssetManager), graphicalAssetManager },
@@ -143,7 +136,7 @@ namespace Frith
 
 			foreach (var service in addedServices.Values)
 			{
-				Services.AddService(service.GetType(), service);
+				Services.AddService(service?.GetType(), service);
 			}
 
 		}
@@ -160,7 +153,6 @@ namespace Frith
 			base.Update(gameTime);
 
 
-			previousKeyboardState = currentKeyboardState;
 			
 		}
 
@@ -168,17 +160,17 @@ namespace Frith
 		{
 
 
-			_graphics.GraphicsDevice.SetRenderTarget(renderTarget);
+			graphics.GraphicsDevice.SetRenderTarget(renderTarget);
 
 			GraphicsDevice.Clear(Color.Black);
 
-			if (_spriteBatch == null)
+			if (spriteBatch == null)
 			{
 				throw new Exception("Spritebatch cannot be null");
 			}
 				
 
-			_spriteBatch.Begin();
+			spriteBatch.Begin();
 
 			
 
@@ -187,14 +179,15 @@ namespace Frith
 			//Globals<Registry>.Instance().GetSystem<RenderSystem>();
 			//Globals<Registry>.Instance().GetSystem<RenderBmpTextSystem>();
 
-			_spriteBatch.End();
+			spriteBatch.End();
 
-			_graphics.GraphicsDevice.SetRenderTarget(null);
+			graphics.GraphicsDevice.SetRenderTarget(null);
 
 			// TODO: Add your drawing code here
-			_spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-			_spriteBatch.Draw(renderTarget, displayManager.DestinationRectangle, Color.White);
-			_spriteBatch.End();
+			spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+			if (displayManager != null)
+				spriteBatch.Draw(renderTarget, displayManager.DestinationRectangle, Color.White);
+			spriteBatch.End();
 
 		}
 	}

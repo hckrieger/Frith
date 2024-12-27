@@ -8,25 +8,8 @@ using System.Threading.Tasks;
 
 namespace Frith.Components
 {
-	public struct BoxColliderComponent
+	public struct BoxColliderComponent(Rectangle boundingBox = default)
 	{
-		private Rectangle boundingBox;
-        public Rectangle BoundingBox
-        {
-            get
-            {
-                return boundingBox;
-            }
-
-            set
-            {
-                boundingBox = value;
-            }
-        }
-
-        public BoxColliderComponent(Rectangle boundingBox = default)
-        {
-			this.boundingBox = boundingBox;
-        }
-    }
+        public Rectangle BoundingBox { get; set; } = boundingBox;
+	}
 }

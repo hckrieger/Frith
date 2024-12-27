@@ -7,46 +7,18 @@ using System.Threading.Tasks;
 
 namespace Frith.Components
 {
-    public struct AnimationComponent
+    public struct AnimationComponent(int numFrames = 1, float frameTime = 0, bool isLoop = true)
     {
-        private int numFrames;
-        public int NumFrames =>  numFrames;
+        public int NumFrames { get; } = numFrames;
 
         public bool IsPlaying { get; set; } = false;
 
-        private int currentFrame;
+        public int CurrentFrame { get; set; } = 1;
 
-        public int CurrentFrame
-        {
-            get {
-                return currentFrame;
-            }
-
-            set
-            {
-                currentFrame = value;
-            }
-        }
-
-        private float frameTime;
-
-        public float FrameTime
-        {
-            get => frameTime;
-            set { frameTime = value; }
-        }
+        public float FrameTime { get; set; } = frameTime;
 
         public float CurrentTime { get; set; } = 0;
 
-        private bool isLoop;
-
-        public AnimationComponent(int numFrames = 1, float frameTime = 0, bool isLoop = true)
-        {
-            this.numFrames = numFrames;
-            this.frameTime = frameTime;
-            this.isLoop = isLoop;
-            this.currentFrame = 1;
-            
-        }
+        private bool isLoop = isLoop;
     }
 }

@@ -1,11 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Frith
 {
@@ -27,7 +21,7 @@ namespace Frith
 		public TextureData(Texture2D texture, Point frameSize = default)
 		{
  
-			TextureId = default;
+			TextureId = 0;
 			Texture = texture;
 
 			if (frameSize == default)
@@ -40,8 +34,8 @@ namespace Frith
 
 		public Rectangle GetTextureFrame(int index)
 		{
-			int rowIndex = index / Columns;
-			int columnIndex = index % Columns;
+			var rowIndex = index / Columns;
+			var columnIndex = index % Columns;
 
 			if (rowIndex < 0 || rowIndex >= Rows || columnIndex < 0 || columnIndex >= Columns)
 			{

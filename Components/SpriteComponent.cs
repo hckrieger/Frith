@@ -10,28 +10,19 @@ namespace Frith.Components
 {
 	public struct SpriteComponent
 	{
-        private int textureId;
-
-
-		public Rectangle Rectangle { get; set; }
+        public Rectangle Rectangle { get; set; }
 
 
 
-        public int TextureId => textureId;
+        public int TextureId { get; }
 
-        private float layerDepth;
+        public float LayerDepth { get; set; }
 
-        public float LayerDepth
-        {
-            get => layerDepth;
-            set => layerDepth = value;
-        }
-
-		public SpriteComponent(int textureId = default, float sourceIndex = 0, float layerDepth = .5f)
+        public SpriteComponent(int textureId = 0, float sourceIndex = 0, float layerDepth = .5f)
         {
             Rectangle = Rectangle.Empty;
-            this.textureId = textureId;
-            this.layerDepth = layerDepth;
+            this.TextureId = textureId;
+            this.LayerDepth = layerDepth;
         }
 
   

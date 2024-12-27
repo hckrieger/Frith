@@ -22,21 +22,25 @@ namespace Frith.Extensions
 		public static void LoadSpriteComponents(this Entity entity, string assetName, string filePath, Vector2 position, Game game, Point frameSize = default, int index = 0)
 		{
 
-			TextureData textureData = GetTextureData(entity, assetName, filePath, position, game, frameSize);
+			var textureData = GetTextureData(entity, assetName, filePath, position, game, frameSize);
 
-			SpriteComponent spriteComponent = new SpriteComponent(entity.GetId());
-			spriteComponent.Rectangle = textureData.GetTextureFrame(index);
+			var spriteComponent = new SpriteComponent(entity.GetId())
+			{
+				Rectangle = textureData.GetTextureFrame(index)
+			};
 			entity.AddComponent(spriteComponent);
 		}
 
 		public static void LoadSpriteComponents(this Entity entity, string assetName, string filePath, Vector2 position, Game game, Point frameSize, Point gridPosition)
 		{
 
-			TextureData textureData = GetTextureData(entity, assetName, filePath, position, game, frameSize);
+			var textureData = GetTextureData(entity, assetName, filePath, position, game, frameSize);
 
 
-			SpriteComponent spriteComponent = new SpriteComponent(entity.GetId());
-			spriteComponent.Rectangle = textureData.GetTextureFrame(gridPosition);
+			var spriteComponent = new SpriteComponent(entity.GetId())
+			{
+				Rectangle = textureData.GetTextureFrame(gridPosition)
+			};
 			entity.AddComponent(spriteComponent);
 		}
 
@@ -44,22 +48,22 @@ namespace Frith.Extensions
 		public static void LoadBmpTextComponents(this Entity entity, string assetName, string filePath, string text, Color color, Vector2 position, Game game, Point frameSize = default)
 		{
 		
-			TextureData textureData = GetTextureData(entity, assetName, filePath, position, game, frameSize);
+			var textureData = GetTextureData(entity, assetName, filePath, position, game, frameSize);
 
-			Type type = entity.GetType();
+			var type = entity.GetType();
 			entity.AddComponent(new TextLabelComponent(text, entity.GetId(), color));
 		}
 
 		private static TextureData GetTextureData(Entity entity, string assetName, string filePath, Vector2 position, Game game, Point frameSize = default)
 		{
-			GraphicalAssetManager graphicalAssetManager = game.Services.GetService<GraphicalAssetManager>();
+			var graphicalAssetManager = game.Services.GetService<GraphicalAssetManager>();
 
 			
 			graphicalAssetManager.AddTexture(assetName, filePath);
 
 			entity.AddComponent(new TransformComponent(position));
 
-			TextureData textureData = new TextureData(graphicalAssetManager.GetTexture(assetName), frameSize);
+			var textureData = new TextureData(graphicalAssetManager.GetTexture(assetName), frameSize);
 
 			game.Services.GetService<TextureManager>().AddTextureData(entity.GetId(), textureData);
 

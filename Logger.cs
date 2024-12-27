@@ -9,20 +9,20 @@ namespace Frith
 {
     public static class Logger
     {
-        public enum LogType
+        private enum LogType
         {
-            INFO,
-            WARNING,
-            ERROR
+            Info,
+            Warning,
+            Error
         }
 
-        struct LogEntry
+        private struct LogEntry
         {
-            public LogType type;
-            public string message;
+            public LogType Type;
+            public string Message;
         }
 
-        public static string CurrentDateTimeToString()
+        private static string CurrentDateTimeToString()
         {
             //return DateTime.Now.ToString("%d-%b-%Y %H:%M:%S");
             return DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
@@ -30,17 +30,17 @@ namespace Frith
 
         public static void Info(string message)
         {
-            LogMessage(message, LogType.INFO);
+            LogMessage(message, LogType.Info);
         }
 
         public static void Error(string message)
         {
-            LogMessage(message, LogType.ERROR);
+            LogMessage(message, LogType.Error);
         }
 
         public static void Warn(string message)
         {
-            LogMessage(message, LogType.WARNING);
+            LogMessage(message, LogType.Warning);
         }
 
 
@@ -48,9 +48,9 @@ namespace Frith
         private static void LogMessage(string message, LogType logType)
         {
             LogEntry logEntry;
-            logEntry.type = logType;
-            logEntry.message = $"{logType}: [{CurrentDateTimeToString()}]: {message}";
-            Debug.WriteLine(logEntry.message);
+            logEntry.Type = logType;
+            logEntry.Message = $"{logType}: [{CurrentDateTimeToString()}]: {message}";
+            Debug.WriteLine(logEntry.Message);
         }
     }
 }

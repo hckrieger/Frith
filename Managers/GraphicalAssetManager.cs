@@ -8,60 +8,38 @@ using System.Threading.Tasks;
 
 namespace Frith.Managers
 {
-	public class GraphicalAssetManager
+	public class GraphicalAssetManager(ContentManager content)
 	{
 
 		private readonly Dictionary<string, Texture2D> textureAssets = new Dictionary<string, Texture2D>();
 		private readonly Dictionary<string, SpriteFont> ttfTextAssets = new Dictionary<string, SpriteFont>();
 
-		private readonly ContentManager content;
-
-		public GraphicalAssetManager(ContentManager content)
-		{
-			this.content = content;
-		}
-
 		public void AddTexture(string assetId, string filePath)
 		{
-			if (!textureAssets.ContainsKey(assetId))
-			{
+			if (textureAssets.ContainsKey(assetId)) return;
+			
+			var texture = content.Load<Texture2D>(filePath);
 
-				var texture = content.Load<Texture2D>(filePath);
-
-				textureAssets[assetId] = texture;
-			}
+			textureAssets[assetId] = texture;
 		}
 
-		public Texture2D GetTexture(string assetId)
+		public Texture2D? GetTexture(string assetId)
 		{
-			if (textureAssets.TryGetValue(assetId, out Texture2D texture))
-			{
-				return texture;
-			}
-
-			return null;
+			return textureAssets.GetValueOrDefault(assetId);
 		}
 
 
-		public void AddSpriteFontTTF(string assetId, string filePath)
+		public void AddSpriteFontTtf(string assetId, string filePath)
 		{
-			if (!textureAssets.ContainsKey(assetId))
-			{
+			if (textureAssets.ContainsKey(assetId)) return;
+			var texture = content.Load<SpriteFont>(filePath);
 
-				var texture = content.Load<SpriteFont>(filePath);
-
-				ttfTextAssets[assetId] = texture;
-			}
+			ttfTextAssets[assetId] = texture;
 		}
 
-		public SpriteFont? GetSpriteFontTTF(string assetId)
+		public SpriteFont? GetSpriteFontTtf(string assetId)
 		{
-			if (ttfTextAssets.TryGetValue(assetId, out SpriteFont? spriteFont))
-			{
-				return spriteFont;
-			}
-
-			return null;
+			return ttfTextAssets.GetValueOrDefault(assetId);
 		}
 
 

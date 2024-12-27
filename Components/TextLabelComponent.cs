@@ -8,14 +8,12 @@ using System.Threading.Tasks;
 
 namespace Frith.Components
 {
-	public struct TextLabelComponent
+	public struct TextLabelComponent(string text = "", int textureId = 0, Color color = default)
 	{
 
-		private string text;
+		private string text = text;
 
-		private char[] textCharacters;
-
-		public char[] TextCharacters => textCharacters;
+		public char[] TextCharacters { get; private set; } = text.ToCharArray();
 
 		public string Text
 		{
@@ -27,38 +25,17 @@ namespace Frith.Components
 
 				text = value;
 				
-				if (textCharacters == null || textCharacters.Length != text.Length)
+				if (TextCharacters == null || TextCharacters.Length != text.Length)
 				{
-					textCharacters = new char[text.Length];
+					TextCharacters = new char[text.Length];
 				}
 
-				text.CopyTo(0, textCharacters, 0, text.Length);
+				text.CopyTo(0, TextCharacters, 0, text.Length);
 			}
 		}
 
-		private int textureId;
-		public int TextureId
-		{
-			get => textureId;
-			set => textureId = value;
-		}
+		public int TextureId { get; set; } = textureId;
 
-		private Color color;
-
-		public Color Color
-		{
-			get => color;
-			set => color = value;
-		}
-
-
-		public TextLabelComponent(string text = "", int textureId = default, Color color = default)
-		{
-			textCharacters = text.ToCharArray();
-			this.text = text;
-			this.textureId = textureId;
-			this.color = color;
-		}
-
+		public Color Color { get; set; } = color;
 	}
 }

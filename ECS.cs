@@ -1,39 +1,30 @@
 ﻿//using Frith.Components;
 using Frith.Extensions;
-using Frith.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Signature = System.Collections.BitArray;
 
 
 namespace Frith
 {
-	public static class ECSConstants
+	public static class EcsConstants
     {
-        public const int MAX_COMPONENTS = 32;
+        private const int MaxComponents = 32;
 
         // Signature
         // We use a bitset (1s and 0s) to keep track of which components an entity has,
         // and also helps keep track of which entities a system is interested in
-        public static Signature CreateSignature() => new Signature(MAX_COMPONENTS);
+        public static Signature CreateSignature() => new Signature(MaxComponents);
     }
 
     //IComponent and Component
     //Component only needs an id
-    public class IComponent
+    public class Component
     {
-        protected static int nextId = 0;
+        protected static int nextId;
     }
 
-    public class Component<T> : IComponent
+    public abstract class Component<T> : Component
     {
         private static int id = -1;
         public static int GetId()
@@ -53,7 +44,7 @@ namespace Frith
     // Needs an id and operator overloading. 
     public class Entity
     {
-        private int id;
+        private readonly int id;
 
         public enum LifeCycle
         {
@@ -160,14 +151,14 @@ namespace Frith
     // 2: entities list
     // 3: add entities to system if there's component match
     // 4: remove entities from system
-    // 5: Require a component by setting it's bitset in the system to true
+    // 5: Require a component by setting its bitset in the system to true
     public class System
     {
         // Which components an entity must have for the system to consider the entity
-        private Signature componentSignature = ECSConstants.CreateSignature();
+        private readonly Signature componentSignature = EcsConstants.CreateSignature();
 
         // list of all entities that the system is interested in
-        private List<Entity> entities = new List<Entity>();
+        private readonly List<Entity> entities = new List<Entity>();
 
         public void AddEntityToSystem(Entity entity)
         {
@@ -176,7 +167,7 @@ namespace Frith
 
         public void RemoveEntityFromSystem(Entity entity)
         {
-            entities.RemoveAll(e => e == entity);
+            entities.RemoveAll(e => Equals(e, entity));
         }
 
         public List<Entity> GetSystemEntities() => entities;
@@ -205,13 +196,13 @@ namespace Frith
 
     // Pool 
 
-    public class Pool<T> : IPool where T : struct
+    public abstract class Pool<T> : IPool where T : struct
     {
         private T[] data;
         private int size;
 
-        private Dictionary<int, int> entityIdToIndex = new Dictionary<int, int>();
-        private Dictionary<int, int> indexToEntityId = new Dictionary<int, int>();
+        private readonly Dictionary<int, int> entityIdToIndex = new Dictionary<int, int>();
+        private readonly Dictionary<int, int> indexToEntityId = new Dictionary<int, int>();
 
         private int capacity;
 
@@ -227,7 +218,7 @@ namespace Frith
 		private void AddCapacity()
 		{
             capacity *= 2;
-            T[] newData = new T[capacity];
+            var newData = new T[capacity];
             Array.Copy(data, newData, size);
             data = newData;
 		}
@@ -293,15 +284,15 @@ namespace Frith
 
         public void Remove(int entityId)
         {
-            if (!entityIdToIndex.TryGetValue(entityId, out int indexOfRemoved))
+            if (!entityIdToIndex.TryGetValue(entityId, out var indexOfRemoved))
             {
                 throw new InvalidOperationException($"Entity {entityId} does not exist in the pool");   
             }
 
-            int indexOfLast = size - 1;
+            var indexOfLast = size - 1;
             data[indexOfRemoved] = data[indexOfLast];
 
-            int entityIdOfLastElement = indexToEntityId[indexOfLast];
+            var entityIdOfLastElement = indexToEntityId[indexOfLast];
             entityIdToIndex[entityIdOfLastElement] = indexOfRemoved;
             indexToEntityId[indexOfRemoved] = entityIdOfLastElement;
 
@@ -315,7 +306,7 @@ namespace Frith
 
         public ref T Get(int entityId)
         {
-            if (!entityIdToIndex.TryGetValue(entityId, out int index))
+            if (!entityIdToIndex.TryGetValue(entityId, out var index))
             {
                 throw new KeyNotFoundException($"Entity {entityId} does not have a component of type {typeof(T).Name}.");
             }
@@ -337,26 +328,26 @@ namespace Frith
         private int numEntities = 0;
 
         // List of component pools, each pool contains all the data for a certain component type
-        private List<IPool> componentPools = new List<IPool>();
+        private readonly List<IPool> componentPools = new List<IPool>();
 
-        private List<Signature?> entityComponentSignatures = new List<Signature?>();
+        private readonly List<Signature?> entityComponentSignatures = new List<Signature?>();
 
-        private Dictionary<Type, System> systems = new Dictionary<Type, System>();
+        private readonly Dictionary<Type, System> systems = new Dictionary<Type, System>();
 
-        private HashSet<Entity> entitiesToBeAdded = new HashSet<Entity>();
-        private HashSet<Entity> entitiesToBeRemoved = new HashSet<Entity>();
+        private readonly HashSet<Entity> entitiesToBeAdded = new HashSet<Entity>();
+        private readonly HashSet<Entity> entitiesToBeRemoved = new HashSet<Entity>();
 
-        private Dictionary<string, Entity?> entityPerTag = new Dictionary<string, Entity?>();
-        private Dictionary<int, string> tagPerEntity = new Dictionary<int, string>();
+        private readonly Dictionary<string, Entity?> entityPerTag = new Dictionary<string, Entity?>();
+        private readonly Dictionary<int, string> tagPerEntity = new Dictionary<int, string>();
 
-        private Dictionary<string, HashSet<Entity?>> entitiesPerGroup = new Dictionary<string, HashSet<Entity?>>();
-        private Dictionary<int, string> groupPerEntity = new Dictionary<int, string>();
+        private readonly Dictionary<string, HashSet<Entity?>> entitiesPerGroup = new Dictionary<string, HashSet<Entity?>>();
+        private readonly Dictionary<int, string> groupPerEntity = new Dictionary<int, string>();
 
-        private HashSet<Entity> allEntities = new HashSet<Entity>();
+        private readonly HashSet<Entity> allEntities = new HashSet<Entity>();
 
         public HashSet<Entity> GetAllEntities => allEntities;
 
-        public HashSet<Entity> reservedEntities = new HashSet<Entity>();
+        private readonly HashSet<Entity> reservedEntities = new HashSet<Entity>();
 
 		public void ReserveEntity(Entity entity)
         {
@@ -398,12 +389,7 @@ namespace Frith
 
         public bool EntityHasTag(Entity? entity, string tag)
         {
-            if (tagPerEntity[entity.GetId()] != null)
-            {
-                return false;
-            }
-
-            return entityPerTag[tag] == entity;
+            return tagPerEntity[entity.GetId()] == null && entityPerTag[tag].Equals(entity);
         }
 
         public Entity? GetEntityByTag(string tag)
@@ -417,11 +403,8 @@ namespace Frith
                 return;
 
             var taggedEntity = tagPerEntity[entity.GetId()];
-            if (taggedEntity != null)
-            {
-                entityPerTag.Remove(taggedEntity); 
-                tagPerEntity.Remove(entity.GetId());
-            }
+            entityPerTag.Remove(taggedEntity); 
+            tagPerEntity.Remove(entity.GetId());
         }
 
         public void GroupEntity(Entity? entity, string group)
@@ -456,27 +439,23 @@ namespace Frith
                  return; 
 
             var groupedEntity = groupPerEntity[entity.GetId()];
-            if (groupedEntity != null)
+            var group = entitiesPerGroup[groupedEntity];
+
+            if (!group.Contains(entity))
+                return;
+
+            if (group != null)
             {
-
-                var group = entitiesPerGroup[groupedEntity];
-
-                if (!group.Contains(entity))
-                    return;
-
-                if (group != null)
-                {
-                    var entityInGroup = group.FirstOrDefault(e => e == entity);
+                var entityInGroup = group.FirstOrDefault(e => Equals(e, entity));
                     
-                        group.Remove(entityInGroup);
+                group.Remove(entityInGroup);
                     
-                }
-                groupPerEntity.Remove(entity.GetId());
             }
+            groupPerEntity.Remove(entity.GetId());
         }
 
 
-        private LinkedList<int>? freeIds = new LinkedList<int>();
+        private readonly LinkedList<int>? freeIds = [];
 
         public Entity CreateEntity(Scene associatedScene)
         {
@@ -487,19 +466,21 @@ namespace Frith
 				entityId = numEntities++;
 				if (entityId >= entityComponentSignatures.Count)
 				{
-					entityComponentSignatures.Add(ECSConstants.CreateSignature());
+					entityComponentSignatures.Add(EcsConstants.CreateSignature());
 				}
 			}
 			else
 			{
-				entityId = freeIds.First();
+				entityId = (freeIds ?? throw new InvalidOperationException()).First();
 				freeIds.RemoveFirst();
 			}
 
 
-			var entity = new Entity(entityId);
-			entity.registry = this;
-			entitiesToBeAdded.Add(entity);
+			var entity = new Entity(entityId)
+            {
+                registry = this
+            };
+            entitiesToBeAdded.Add(entity);
 
             entity.SceneId = associatedScene.GetId;
 
@@ -548,19 +529,13 @@ namespace Frith
 
         public void AddComponent<TComponent>(Entity entity, TComponent component) where TComponent : struct
         {
-            int componentId = Component<TComponent>.GetId();
-            int entityId = entity.GetId();
+            var componentId = Component<TComponent>.GetId();
+            var entityId = entity.GetId();
 
             //If the component id is greater than the current size of the componentPools, then resize the vector
             if (componentId >= componentPools.Count)
             {
                 componentPools.AddRange(new IPool[componentId - componentPools.Count + 1]);
-            }
-
-            // If we still don't have a Pool for that component type
-            if (componentPools[componentId] == null)
-            {
-                componentPools[componentId] = new Pool<TComponent>();
             }
 
             //Get the pool of component values for that component type
@@ -584,8 +559,8 @@ namespace Frith
 
         public void RemoveComponent<TComponent>(Entity entity) where TComponent : struct
         {
-            int componentId = Component<TComponent>.GetId();
-            int entityId = entity.GetId();
+            var componentId = Component<TComponent>.GetId();
+            var entityId = entity.GetId();
             
 
 			var pool = (Pool<TComponent>)componentPools[componentId];
@@ -598,15 +573,15 @@ namespace Frith
 
         public bool HasComponent<TComponent>(Entity entity) where TComponent : struct
         {
-            int componentId = Component<TComponent>.GetId();
-            int entityId = entity.GetId();
+            var componentId = Component<TComponent>.GetId();
+            var entityId = entity.GetId();
 
             return entityComponentSignatures[entityId]?[componentId] == true;
         }
 
         public ref TComponent GetComponent<TComponent>(Entity entity) where TComponent: struct
         {
-            int componentId = Component<TComponent>.GetId();
+            var componentId = Component<TComponent>.GetId();
             var pool = (Pool<TComponent>)componentPools[componentId];
             return ref pool.Get(entity.GetId());
         }
@@ -618,16 +593,13 @@ namespace Frith
 
         public void RemoveSystem<TSystem>()
         {
-            System system = systems[typeof(TSystem)];
+            var system = systems[typeof(TSystem)];
             systems.Remove(system.GetType());
         }
 
         public bool HasSystem<TSystem>() where TSystem : System
         {
-            if (systems.ContainsKey(typeof(TSystem)))
-                return true;
-
-            else return false;
+            return systems.ContainsKey(typeof(TSystem));
         }
 
 		public TSystem? GetSystem<TSystem>() where TSystem : System
@@ -639,27 +611,25 @@ namespace Frith
 			return null;  // System not found
 		}
 
-		public void AddEntityToSystems(Entity entity)
+        private void AddEntityToSystems(Entity entity)
         {
-            int entityId = entity.GetId();
+            var entityId = entity.GetId();
 
-            Signature? entityComponantSignature = entityComponentSignatures[entityId];
+            var entityComponentSignature = entityComponentSignatures[entityId];
 
-            foreach (System system in systems.Values)
+            foreach (var system in systems.Values)
             {
-                Signature systemComponentSignature = system.GetComponentSignature();
+                var systemComponentSignature = system.GetComponentSignature();
 
-                if (entityComponantSignature != null)
+                if (entityComponentSignature == null) continue;
+                var signatureResult = new Signature(entityComponentSignature).And(systemComponentSignature);
+
+                var isInterested = signatureResult.AreValuesEqual(systemComponentSignature);
+
+                if (isInterested)
                 {
-                    Signature signatureResult = new Signature(entityComponantSignature).And(systemComponentSignature);
-
-                    bool isInterested = signatureResult.AreValuesEqual(systemComponentSignature);
-
-                    if (isInterested)
-                    {
-                        system.AddEntityToSystem(entity);
-                    }
-				}
+                    system.AddEntityToSystem(entity);
+                }
 
             }
         }

@@ -9,23 +9,18 @@ using System.Threading.Tasks;
 
 namespace Frith.Managers
 {
-    public class DisplayManager
+    public class DisplayManager(GraphicsDeviceManager graphics)
     {
-        private GraphicsDeviceManager graphics;
-
         private Point internalResolution;
         public Point InternalResolution
         {
-            get { return internalResolution; }
-            set {
-                
-                internalResolution = value; 
-            }
+            get => internalResolution;
+            set => internalResolution = value;
         }
 
         public Point WindowSize
         {
-            get { return windowSize; }
+            get => windowSize;
             set
             {
                 windowSize = value;
@@ -38,12 +33,6 @@ namespace Frith.Managers
         private Rectangle destinationRectangle;
 
         public Rectangle DestinationRectangle => destinationRectangle;
-        public DisplayManager(GraphicsDeviceManager graphics)
-        {
-            this.graphics = graphics;
-
-            
-        }
 
 
         public void SetScreenSize()
@@ -68,8 +57,8 @@ namespace Frith.Managers
 
         private void SetDestinationRectangle()
         {
-            float screenAspectRatio = (float)graphics.GraphicsDevice.PresentationParameters.BackBufferWidth / graphics.GraphicsDevice.PresentationParameters.BackBufferHeight;
-            float resolutionAspectRatio = (float)internalResolution.X / internalResolution.Y;
+            var screenAspectRatio = (float)graphics.GraphicsDevice.PresentationParameters.BackBufferWidth / graphics.GraphicsDevice.PresentationParameters.BackBufferHeight;
+            var resolutionAspectRatio = (float)internalResolution.X / internalResolution.Y;
             int x, y, width, height;
 
             if (screenAspectRatio > resolutionAspectRatio)

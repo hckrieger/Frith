@@ -11,10 +11,10 @@ namespace Frith
 {
 
 
-	public class Scene 
+	public abstract class Scene 
 	{
 
-		protected Registry registry;
+		private readonly Registry registry;
 		protected Game game;
 
 		protected static int nextId = 0;
@@ -70,21 +70,23 @@ namespace Frith
 		{
 			foreach (var entity in registry.GetAllEntities)
 			{
-				if (entity.EntityLifeCycle == Entity.LifeCycle.Volatile && entity.SceneId != GetId)
+				switch (entity.EntityLifeCycle)
 				{
-					entity.RemoveSelf();
-				}
-				else if (entity.EntityLifeCycle == Entity.LifeCycle.Isolated && entity.SceneId == GetId)
-				{
-					registry.ReassignReservedEntity(entity, GetId);
-				}
-				else if ((entity.EntityLifeCycle == Entity.LifeCycle.Isolated && entity.SceneId != GetId) || entity.EntityLifeCycle == Entity.LifeCycle.Reserved)
-				{
-					registry.ReserveEntity(entity);
-				}
-				else if (entity.EntityLifeCycle == Entity.LifeCycle.Persistant)
-				{
-					entity.SceneId = GetId;
+					case Entity.LifeCycle.Volatile when entity.SceneId != GetId:
+						entity.RemoveSelf();
+						break;
+					case Entity.LifeCycle.Isolated when entity.SceneId == GetId:
+						registry.ReassignReservedEntity(entity, GetId);
+						break;
+					case Entity.LifeCycle.Isolated when entity.SceneId != GetId:
+					case Entity.LifeCycle.Reserved:
+						registry.ReserveEntity(entity);
+						break;
+					case Entity.LifeCycle.Persistant:
+						entity.SceneId = GetId;
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
 				}
 			}
 		}
@@ -93,7 +95,7 @@ namespace Frith
 		{
 			foreach (var entity in registry.GetAllEntities)
 			{
-				if (entity.EntityLifeCycle == Entity.LifeCycle.Isolated || entity.EntityLifeCycle == Entity.LifeCycle.Reserved)
+				if (entity.EntityLifeCycle is Entity.LifeCycle.Isolated or Entity.LifeCycle.Reserved)
 				{
 					
 					registry.ReserveEntity(entity);

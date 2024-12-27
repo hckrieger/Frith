@@ -1,33 +1,20 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Frith.Managers
 {
-	public class SceneManager : DrawableGameComponent
+	public class SceneManager(SpriteBatch spriteBatch, Game game) : DrawableGameComponent(game)
 	{
 
-		private Dictionary<string, Scene> scenes = new Dictionary<string, Scene>();
+		private readonly Dictionary<string, Scene> scenes = new Dictionary<string, Scene>();
 
-		private Scene? currentScene; 
-		private SpriteBatch spriteBatch;
-
-		public SceneManager(SpriteBatch spriteBatch, Game game) : base(game)
-		{
-			this.spriteBatch = spriteBatch;
-		}
+		private Scene? currentScene;
 
 
 		public void AddScene(string sceneName, Scene scene)
 		{
-			if (!scenes.ContainsKey(sceneName))
+			if (scenes.TryAdd(sceneName, scene))
 			{
-				scenes[sceneName] = scene;
 				scene.OnCreate();
 
 			}
@@ -35,26 +22,20 @@ namespace Frith.Managers
 
 		public void SwitchToScene(string sceneName)
 		{
-			if (scenes.TryGetValue(sceneName, out var newScene))
-			{
-				 currentScene?.OnExit();
-				currentScene = newScene;
+			if (!scenes.TryGetValue(sceneName, out var newScene)) return;
+			
+			currentScene?.OnExit();
+			currentScene = newScene;
 
-				if (!currentScene.HasBeenVisited)
-					currentScene?.OnFirstEnter();
+			if (!currentScene.HasBeenVisited)
+				currentScene?.OnFirstEnter();
 
-				currentScene?.OnEnter();
-			}
+			currentScene?.OnEnter();
 		}
 
 		public Scene? GetScene(string sceneName)
 		{
-			if (scenes.TryGetValue(sceneName, out Scene? scene))
-			{
-				return scene;
-			}
-
-			return null;
+			return scenes.GetValueOrDefault(sceneName);
 		}
 
 
