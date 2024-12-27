@@ -19,8 +19,6 @@ namespace Frith
 		private readonly GraphicsDeviceManager graphics;
 		private SpriteBatch? spriteBatch;
 
-		//protected AssetStore<Texture2D> textureAssets;
-		//protected AssetStore<SpriteFont> TtfFontAssets;
 
 		private RenderTarget2D? renderTarget;
 		private readonly GraphicalAssetManager? graphicalAssetManager;
