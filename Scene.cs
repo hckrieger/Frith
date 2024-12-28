@@ -14,7 +14,7 @@ namespace Frith
 	public abstract class Scene 
 	{
 
-		private readonly Registry registry;
+		protected readonly Registry registry;
 		protected Game game;
 
 		protected static int nextId = 0;

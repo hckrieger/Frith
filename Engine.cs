@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Frith.Managers;
+using Frith.Systems;
 
 namespace Frith
 {
@@ -20,7 +21,7 @@ namespace Frith
 		private DisplayManager? displayManager;
 		private readonly TextureManager? textureManager;
 
-		private SceneManager? sceneManager;
+		protected SceneManager? sceneManager;
 
 		private InputManager? inputManager;
 		
@@ -165,8 +166,8 @@ namespace Frith
 
 				base.Draw(gameTime);
 
-			//Globals<Registry>.Instance().GetSystem<RenderSystem>();
-			//Globals<Registry>.Instance().GetSystem<RenderBmpTextSystem>();
+			Globals<Registry>.Instance().GetSystem<RenderSystem>();
+			Globals<Registry>.Instance().GetSystem<RenderBmpTextSystem>();
 
 			spriteBatch.End();
 

@@ -196,7 +196,7 @@ namespace Frith
 
     // Pool 
 
-    public abstract class Pool<T> : IPool where T : struct
+    public class Pool<T> : IPool where T : struct
     {
         private T[] data;
         private int size;
@@ -532,14 +532,27 @@ namespace Frith
             var componentId = Component<TComponent>.GetId();
             var entityId = entity.GetId();
 
+
             //If the component id is greater than the current size of the componentPools, then resize the vector
             if (componentId >= componentPools.Count)
             {
                 componentPools.AddRange(new IPool[componentId - componentPools.Count + 1]);
             }
 
+            if (componentPools[componentId] == null)
+            {
+                componentPools[componentId] = new Pool<TComponent>();
+            }
+
+           
+
             //Get the pool of component values for that component type
-            var componentPool = (Pool<TComponent>)componentPools[componentId];
+            Pool<TComponent> componentPool = (Pool<TComponent>)componentPools[componentId];
+            componentPool.Set(entityId, component);
+            // if (componentPool == null)
+            // {
+            //     componentPool[componentId] = new Pool<TComponent>();
+            // }
 
             // If the entity id is greater than the current size of the component pool, then resize the pool
             //if (entityId >= pool.GetSize())
@@ -548,7 +561,7 @@ namespace Frith
             //}
 
             //add the new component to the component pool list, using the entity id as index
-            componentPool.Set(entityId, component);
+            componentPool[entityId] = component;
 
             // Finally, change the component signature of the entity and set the component id on the bitset to 1
             entityComponentSignatures[entityId]?.Set(componentId, true);

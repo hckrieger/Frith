@@ -11,16 +11,22 @@ namespace Frith.Managers
 	public class GraphicalAssetManager(ContentManager content)
 	{
 
-		private readonly Dictionary<string, Texture2D> textureAssets = new Dictionary<string, Texture2D>();
-		private readonly Dictionary<string, SpriteFont> ttfTextAssets = new Dictionary<string, SpriteFont>();
-
+		private readonly Dictionary<string, Texture2D> textureAssets = new();
+	
 		public void AddTexture(string assetId, string filePath)
 		{
 			if (textureAssets.ContainsKey(assetId)) return;
-			
-			var texture = content.Load<Texture2D>(filePath);
 
-			textureAssets[assetId] = texture;
+			try
+			{
+				var texture = content.Load<Texture2D>(filePath);
+
+				textureAssets[assetId] = texture;
+			} catch (ContentLoadException e)
+			{
+				Logger.Error($"Failed to load texture {filePath}. Exception: {e.Message}");
+			}
+
 		}
 
 		public Texture2D? GetTexture(string assetId)
@@ -29,18 +35,7 @@ namespace Frith.Managers
 		}
 
 
-		public void AddSpriteFontTtf(string assetId, string filePath)
-		{
-			if (textureAssets.ContainsKey(assetId)) return;
-			var texture = content.Load<SpriteFont>(filePath);
 
-			ttfTextAssets[assetId] = texture;
-		}
-
-		public SpriteFont? GetSpriteFontTtf(string assetId)
-		{
-			return ttfTextAssets.GetValueOrDefault(assetId);
-		}
 
 
 		public void ClearGraphicalAssets()
@@ -51,7 +46,6 @@ namespace Frith.Managers
 			}
 
 			textureAssets.Clear();
-			ttfTextAssets.Clear();
 		}
 		
 	}
