@@ -12,17 +12,22 @@ namespace Frith.Components
 	{
         public Rectangle Rectangle { get; set; }
 
-
+        public Color Color { get; set; }
 
         public int TextureId { get; }
 
         public float LayerDepth { get; set; }
 
-        public SpriteComponent(int textureId = 0, float sourceIndex = 0, float layerDepth = .5f)
+        public SpriteComponent(int textureId = 0, float sourceIndex = 0, float layerDepth = .5f, Color color = default)
         {
             Rectangle = Rectangle.Empty;
             this.TextureId = textureId;
             this.LayerDepth = layerDepth;
+
+            if (color.Equals(default))
+            {
+                Color = Color.White;
+            }
         }
 
   

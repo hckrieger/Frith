@@ -2,12 +2,6 @@
 using Frith.Managers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Frith.Systems
 {
@@ -17,6 +11,7 @@ namespace Frith.Systems
 
         public RenderSystem(Game game)
         {
+			
 			RequireComponent<TransformComponent>();
 			RequireComponent<SpriteComponent>();
 
@@ -32,14 +27,15 @@ namespace Frith.Systems
 
 			foreach (var entity in GetSystemEntities())
 			{
-				ref TransformComponent transform = ref entity.GetComponent<TransformComponent>();
 				ref SpriteComponent sprite = ref entity.GetComponent<SpriteComponent>();
+				ref TransformComponent transform = ref entity.GetComponent<TransformComponent>();
+				
 
 		
 				TextureData? textureData = textureCache[entity.GetId()];
 
 				
-				spriteBatch.Draw(textureData?.Texture, transform.Position, sprite.Rectangle, Color.White, (float)transform.Rotation, Vector2.Zero, transform.Scale, SpriteEffects.None, sprite.LayerDepth);
+				spriteBatch.Draw(textureData?.Texture, transform.Position, sprite.Rectangle, sprite.Color, (float)transform.Rotation, Vector2.Zero, transform.Scale, SpriteEffects.None, sprite.LayerDepth);
 			
 				
 

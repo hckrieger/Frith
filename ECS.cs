@@ -42,9 +42,9 @@ namespace Frith
 
     // Entity
     // Needs an id and operator overloading. 
-    public class Entity
+    public class Entity(int id)
     {
-        private readonly int id;
+        private readonly int id = id;
 
         public enum LifeCycle
         {
@@ -59,13 +59,6 @@ namespace Frith
 		public Registry registry;
 
         public LifeCycle EntityLifeCycle { get; set; } = LifeCycle.Isolated;
-
-        public Entity(int id)
-        {
-            this.id = id;
-        }
-
-
 
         public void RemoveSelf()
         {

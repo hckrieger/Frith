@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Frith")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+73969a1a1fb6981e7e95862bd8b4d1bd3334e2d6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+64df82ae44d4a5bd22388594106103d4a2919173")]
 [assembly: System.Reflection.AssemblyProductAttribute("Frith")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Frith")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

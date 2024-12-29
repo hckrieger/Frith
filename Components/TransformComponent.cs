@@ -6,6 +6,12 @@ namespace Frith.Components
 	{
 		public Vector2 Position { get; set; }
 
+		public Vector2 LocalPosition { get; set; }
+
+		public Entity? Parent { get; set; }
+
+		public bool HadParentInLastFrame { get; set; }
+
 		public Vector2 Scale { get; set; }
 
 		public float Rotation { get; set; }
@@ -15,10 +21,11 @@ namespace Frith.Components
 			if (scale == default)
 				scale = Vector2.One;
 
-			this.Position = position;
+			this.LocalPosition = position;
 			this.Scale = scale;
 			this.Rotation = rotation;
 
+			HadParentInLastFrame = false;
 
         }
     }
