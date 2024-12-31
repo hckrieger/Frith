@@ -107,7 +107,30 @@ namespace Frith.Extensions
 
 			return textureManager.GetTextureData(spriteComponent.TextureId)
 				?? throw new Exception($"No texture data found for TextureId {spriteComponent.TextureId}");
+
+
 		}
 
+
+
+		public static bool HasParent(this Entity entity)
+		{
+			return entity.GetComponent<TransformComponent>().Parent != null;
+		}
+
+		public static void SetParent(this Entity entity, Entity parentEntity)
+		{
+			entity.GetComponent<TransformComponent>().Parent = parentEntity;
+		}
+
+		public static Entity? GetParent(this Entity entity)
+		{
+			return entity.GetComponent<TransformComponent>().Parent;
+		}
+
+		public static void RemoveParent(this Entity entity)
+		{
+			entity.GetComponent<TransformComponent>().Parent = null;
+		}
 	}
 }
