@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Frith.Managers
 {
-	public class InputManager(Game game, DisplayManager? displayManager) : GameComponent(game)
+	public class InputManager : GameComponent
 	{
 
 		private MouseState previousMouseState;
@@ -19,21 +19,29 @@ namespace Frith.Managers
 		private KeyboardState previousKeyboardState;
 		private KeyboardState currentKeyboardState;
 
+		private DisplayManager displayManager;
+
+		public InputManager(Game game, DisplayManager displayManager) : base(game)
+		{
+			this.displayManager = displayManager;
+		}
+
+
 		public override void Update(GameTime gameTime)
 		{
+			
+
 			base.Update(gameTime);
-
-			previousMouseState = currentMouseState;
-			currentMouseState = Mouse.GetState();
-
-			previousKeyboardState = currentKeyboardState;
-			currentKeyboardState = Keyboard.GetState();
+            previousMouseState = currentMouseState;
+            previousKeyboardState = currentKeyboardState;
+            currentMouseState = Mouse.GetState();
+            currentKeyboardState = Keyboard.GetState();
 
 		}
 
 		public bool KeyJustDown(Keys key)
 		{
-			return (previousKeyboardState.IsKeyUp(key) && currentKeyboardState.IsKeyDown(key));	
+			return previousKeyboardState.IsKeyUp(key) && currentKeyboardState.IsKeyDown(key);	
 		}
 
 		public bool KeyHeld(Keys key)

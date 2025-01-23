@@ -1,16 +1,6 @@
 ﻿using Frith.Components;
 using Frith.Managers;
-using Microsoft.Win32;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using TiledLib;
 
 namespace Frith.Extensions
 {
@@ -89,6 +79,20 @@ namespace Frith.Extensions
 			spriteComponent.Rectangle = GetValidatedTextureData(spriteComponent, game).GetTextureFrame(gridPosition);
 		}
 
+		public static int GetSpriteFrameIndex(this Entity entity, Game game)
+		{
+			if (!entity.HasComponent<SpriteComponent>())
+			{
+				throw new Exception("The entity needs a sprite component to get sprite frame");
+			}
+
+			ref SpriteComponent spriteComponent = ref ValidateAndGetSpriteComponent(entity, game);
+
+			var textureData = GetValidatedTextureData(spriteComponent, game);
+
+			return textureData.FrameIndex;
+		}
+
 		// Helper method to validate and retrieve the SpriteComponent
 		private static ref SpriteComponent ValidateAndGetSpriteComponent(Entity entity, Game game)
 		{
@@ -132,5 +136,7 @@ namespace Frith.Extensions
 		{
 			entity.GetComponent<TransformComponent>().Parent = null;
 		}
+
+	
 	}
 }

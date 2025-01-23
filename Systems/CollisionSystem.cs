@@ -22,44 +22,56 @@ namespace Frith.Systems
 
         }
 
-        public void Update(EventBus eventBus)
+        public override void Update(GameTime gameTime)
         {
+
+            base.Update(gameTime);
+
             var entities = GetSystemEntities();
 
             for (int i = 0; i < entities.Count; i++)
             {
                 Entity entityA = entities[i];
 
-				Rectangle entityABounds = entityA.GetComponent<BoxColliderComponent>().BoundingBox;
-                entityABounds.Offset(entityA.GetComponent<TransformComponent>().Position);
+                ref var colliderComponent = ref entityA.GetComponent<BoxColliderComponent>();
 
 
-				for (int j = i; j < entities.Count; j++)
+                if (colliderComponent.BoundingBox == Rectangle.Empty && entityA.HasComponent<SpriteComponent>())
                 {
-                    Entity entityB = entities[j];
+                    var spriteComponent = entityA.GetComponent<SpriteComponent>();
+                    var transformComponent = entityA.GetComponent<TransformComponent>();
 
-                    if (entityA == entityB)
-                        continue;
+                    colliderComponent.BoundingBox = new Rectangle((int)transformComponent.Position.X, (int)transformComponent.Position.Y, spriteComponent.Rectangle.Width, spriteComponent.Rectangle.Height);
+                }
+                colliderComponent.BoundingBox.Offset(entityA.GetComponent<TransformComponent>().Position);
+
+
+				// for (int j = i; j < entities.Count; j++)
+                // {
+                //     Entity entityB = entities[j];
+
+                //     if (entityA == entityB)
+                //         continue;
 
 					
-					Rectangle entityBBounds = entityB.GetComponent<BoxColliderComponent>().BoundingBox;
-					entityBBounds.Offset(entityB.GetComponent<TransformComponent>().Position);
+				// 	Rectangle entityBBounds = entityB.GetComponent<BoxColliderComponent>().BoundingBox;
+				// 	entityBBounds.Offset(entityB.GetComponent<TransformComponent>().Position);
 
-					if (entityABounds.Intersects(entityBBounds))
-                    {
-                        var key = $"{entityA}, {entityB}";
+				// 	if (entityABounds.Intersects(entityBBounds))
+                //     {
+                //         var key = $"{entityA}, {entityB}";
 
-						Logger.Info("Entity " + entityA.GetId() + " is colliding with entity " + entityB.GetId());
+				// 		Logger.Info("Entity " + entityA.GetId() + " is colliding with entity " + entityB.GetId());
 
-                        if (!eventBus.EventCache.TryGetValue(key, out Event? collisionEvent))
-                        {
-                            collisionEvent = new CollisionEvent(entityA, entityB);
-                            eventBus.EventCache[key] = collisionEvent;
-                        }
+                //         if (!eventBus.EventCache.TryGetValue(key, out Event? collisionEvent))
+                //         {
+                //             collisionEvent = new CollisionEvent(entityA, entityB);
+                //             eventBus.EventCache[key] = collisionEvent;
+                //         }
 
-                        eventBus.EmitEvent(eventBus.EventCache[key]);
-                    }
-                }
+                //         eventBus.EmitEvent(eventBus.EventCache[key]);
+                //     }
+                // }
             }
 
 

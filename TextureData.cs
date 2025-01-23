@@ -18,6 +18,8 @@ namespace Frith
 
 		public Point FrameSize { get; set; }
 
+		public int FrameIndex { get; private set;}
+
 		public TextureData(Texture2D texture, Point frameSize = default)
 		{
  
@@ -34,6 +36,7 @@ namespace Frith
 
 		public Rectangle GetTextureFrame(int index)
 		{
+			FrameIndex = index;
 			var rowIndex = index / Columns;
 			var columnIndex = index % Columns;
 

@@ -54,7 +54,7 @@ namespace Frith
             Reserved
         }
 
-        public int SceneId { get; set; }
+        public int? SceneId { get; set; }
 
 		public Registry registry;
 
@@ -450,7 +450,7 @@ namespace Frith
 
         private readonly LinkedList<int>? freeIds = [];
 
-        public Entity CreateEntity(Scene associatedScene)
+        public Entity CreateEntity(Scene? associatedScene = null)
         {
             int entityId;
 
@@ -475,7 +475,10 @@ namespace Frith
             };
             entitiesToBeAdded.Add(entity);
 
-            entity.SceneId = associatedScene.GetId;
+            if (associatedScene != null)
+                entity.SceneId = associatedScene.GetId;
+            else 
+                entity.EntityLifeCycle = Entity.LifeCycle.Persistant;
 
             allEntities.Add(entity);
 

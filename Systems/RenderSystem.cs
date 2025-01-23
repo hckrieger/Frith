@@ -18,9 +18,6 @@ namespace Frith.Systems
 			textureManager = game.Services.GetService<TextureManager>();
         }
 
-		
-
-
         public override void Draw(SpriteBatch spriteBatch)
         {
 			var textureCache = textureManager.GetAllTextureData();
@@ -34,9 +31,9 @@ namespace Frith.Systems
 		
 				TextureData? textureData = textureCache[entity.GetId()];
 
+				if (sprite.Visible)
+					spriteBatch.Draw(textureData?.Texture, transform.Position, sprite.Rectangle, sprite.Color, (float)transform.Rotation, Vector2.Zero, transform.Scale, SpriteEffects.None, sprite.LayerDepth);
 				
-				spriteBatch.Draw(textureData?.Texture, transform.Position, sprite.Rectangle, sprite.Color, (float)transform.Rotation, Vector2.Zero, transform.Scale, SpriteEffects.None, sprite.LayerDepth);
-			
 				
 
 			}

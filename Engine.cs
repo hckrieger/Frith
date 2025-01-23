@@ -23,7 +23,7 @@ namespace Frith
 
 		protected SceneManager? sceneManager;
 
-		private InputManager? inputManager;
+		protected InputManager? inputManager;
 		
 		
 
@@ -160,7 +160,7 @@ namespace Frith
 			}
 				
 
-			spriteBatch.Begin();
+			spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
 			
 
