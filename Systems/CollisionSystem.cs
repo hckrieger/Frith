@@ -36,14 +36,14 @@ namespace Frith.Systems
                 ref var colliderComponent = ref entityA.GetComponent<BoxColliderComponent>();
 
 
-                if (colliderComponent.BoundingBox == Rectangle.Empty && entityA.HasComponent<SpriteComponent>())
-                {
+             //   if (colliderComponent.BoundingBox == Rectangle.Empty && entityA.HasComponent<SpriteComponent>())
+             //   {
                     var spriteComponent = entityA.GetComponent<SpriteComponent>();
                     var transformComponent = entityA.GetComponent<TransformComponent>();
 
                     colliderComponent.BoundingBox = new Rectangle((int)transformComponent.Position.X, (int)transformComponent.Position.Y, spriteComponent.Rectangle.Width, spriteComponent.Rectangle.Height);
-                }
-                colliderComponent.BoundingBox.Offset(entityA.GetComponent<TransformComponent>().Position);
+              //  }
+                
 
 
 				// for (int j = i; j < entities.Count; j++)

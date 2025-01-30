@@ -265,25 +265,32 @@
     ]
   },
   "packageFolders": {
-    "/home/hckrieger/.nuget/packages/": {}
+    "C:\\Users\\hckri\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/hckrieger/Development/GameDev/MonoGame/Libraries/Frith/Frith.csproj",
+      "projectUniqueName": "C:\\Users\\hckri\\source\\repos\\MonoGame\\Libraries\\Frith\\Frith.csproj",
       "projectName": "Frith",
-      "projectPath": "/home/hckrieger/Development/GameDev/MonoGame/Libraries/Frith/Frith.csproj",
-      "packagesPath": "/home/hckrieger/.nuget/packages/",
-      "outputPath": "/home/hckrieger/Development/GameDev/MonoGame/Libraries/Frith/obj/",
+      "projectPath": "C:\\Users\\hckri\\source\\repos\\MonoGame\\Libraries\\Frith\\Frith.csproj",
+      "packagesPath": "C:\\Users\\hckri\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\hckri\\source\\repos\\MonoGame\\Libraries\\Frith\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "/home/hckrieger/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\hckri\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "/usr/lib/dotnet/library-packs": {},
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -337,7 +344,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/9.0.102/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

@@ -72,9 +72,9 @@ namespace Frith
         //public static bool operator !=(Entity a, Entity b) => a.id != b.id;
         //public static bool operator >(Entity a, Entity b) => a.id > b.id;
         //public static bool operator <(Entity a, Entity b) => a.id < b.id;
+     
 
 
-        
 
         public override bool Equals(object? obj)
         {
@@ -152,11 +152,13 @@ namespace Frith
 
         // list of all entities that the system is interested in
         private readonly List<Entity> entities = new List<Entity>();
+       
 
         public void AddEntityToSystem(Entity entity)
         {
             entities.Add(entity);
-        }
+		
+		}
 
         public void RemoveEntityFromSystem(Entity entity)
         {
@@ -175,7 +177,8 @@ namespace Frith
 
         public virtual void Initialize() { }
 
-        public virtual void Update(GameTime gameTime) { }
+        public virtual void Update(GameTime gameTime) {
+        }
 
         public virtual void Draw(SpriteBatch spriteBatch) { }
     }
@@ -320,6 +323,7 @@ namespace Frith
     {
         private int numEntities = 0;
 
+
         // List of component pools, each pool contains all the data for a certain component type
         private readonly List<IPool> componentPools = new List<IPool>();
 
@@ -354,19 +358,19 @@ namespace Frith
         public void ReassignReservedEntity(Entity entity, int sceneId)
         {
             reservedEntities.Remove(entity);
-            AddEntityToSystems(entity);
+          //  AddEntityToSystems(entity);
             entity.SceneId = sceneId;
         }
 
-		public void ReassignReservedEntity(Entity entity, Scene scene)
-		{
-			reservedEntities.Remove(entity);
-			AddEntityToSystems(entity);
-			entity.SceneId = scene.GetId;
+        public void ReassignReservedEntity(Entity entity, Scene scene)
+        {
+            reservedEntities.Remove(entity);
+       //     AddEntityToSystems(entity);
+            entity.SceneId = scene.GetId;
             entity.EntityLifeCycle = Entity.LifeCycle.Isolated;
-		}
+        }
 
-		public HashSet<System> GetAllSystems()
+        public HashSet<System> GetAllSystems()
         {
             return systems.Values.ToHashSet();
         }
@@ -473,7 +477,11 @@ namespace Frith
             {
                 registry = this
             };
+
+
             entitiesToBeAdded.Add(entity);
+
+
 
             if (associatedScene != null)
                 entity.SceneId = associatedScene.GetId;
@@ -483,7 +491,6 @@ namespace Frith
             allEntities.Add(entity);
 
             Logger.Info($"Entity created with id = {entityId}");
-
 
 
             return entity;
@@ -499,6 +506,7 @@ namespace Frith
             foreach (var entity in entitiesToBeAdded)
             {
                 AddEntityToSystems(entity);
+                Logger.Info("Break \n\n\n");
             }
 
             entitiesToBeAdded.Clear();
@@ -637,10 +645,17 @@ namespace Frith
 
                 if (isInterested)
                 {
+              
                     system.AddEntityToSystem(entity);
-                }
+				}
+
+                Logger.Info($"Entity {entityId} Signature: {entityComponentSignature}");
+                Logger.Info($"System {system.GetType().Name} Signature: {systemComponentSignature}");
+                Logger.Info($"Interested: {isInterested}");
+                Logger.Info("\n");
 
             }
+
         }
 
         public void RemoveEntityFromSystems(Entity entity)
