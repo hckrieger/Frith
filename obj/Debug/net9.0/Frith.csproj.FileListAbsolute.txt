@@ -10,3 +10,4 @@ C:\Users\hckri\source\repos\MonoGame\libraries\Frith\obj\Debug\net9.0\Frith.dll
 C:\Users\hckri\source\repos\MonoGame\libraries\Frith\obj\Debug\net9.0\refint\Frith.dll
 C:\Users\hckri\source\repos\MonoGame\libraries\Frith\obj\Debug\net9.0\Frith.pdb
 C:\Users\hckri\source\repos\MonoGame\libraries\Frith\obj\Debug\net9.0\ref\Frith.dll
+C:\Users\hckri\source\repos\MonoGame\libraries\Frith\obj\Debug\net9.0\Frith.sourcelink.json

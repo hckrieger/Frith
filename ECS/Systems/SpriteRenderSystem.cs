@@ -17,12 +17,12 @@ namespace Frith.ECS.Systems
 	{
 		SpriteBatch spriteBatch;
 		AssetCache<Texture2D> textureCache;
-		public SpriteRenderSystem(SpriteBatch spriteBatch, AssetCache<Texture2D> textureCache)
+		public SpriteRenderSystem(Game game, SpriteBatch spriteBatch)
 		{
 			RequireComponent<TransformComponent>();
 			RequireComponent<SpriteComponent>();
 			this.spriteBatch = spriteBatch;	
-			this.textureCache = textureCache;
+			textureCache = game.Services.GetService<AssetCache<Texture2D>>();
 
 		}
 

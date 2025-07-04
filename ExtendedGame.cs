@@ -19,22 +19,20 @@ namespace Frith
 	public class ExtendedGame : Game
 	{
 		protected GraphicsDeviceManager _graphics;
-		private SpriteBatch _spriteBatch;
+		protected SpriteBatch _spriteBatch;
 		private RenderTarget2D? renderTarget;
 		private DisplayManager displayManager;
-		protected AssetCache<Texture2D> textureCache;
-		protected AssetCache<TiledMap?> tilemapCache;
-		protected InputManager inputManager;
+		private AssetCache<Texture2D> textureCache;
+		private AssetCache<TiledMap?> tilemapCache;
+		private InputManager inputManager;
 		private CameraManager cameraManager;
-		protected TiledMapManager tiledMapManager;
-		protected AnimationLibrary animationLibrary;
+		private TiledMapManager tiledMapManager;
+		private AnimationLibrary animationLibrary;
+		protected ScreenManager screenManager;
 
 		
-		private Texture2D? texture;
 		protected Registry registry = new Registry();
 
-		private SpriteRenderSystem renderSystem;
-		private TilemapRenderSystem tilemapRenderSystem;
 
 		public ExtendedGame()
 		{
@@ -55,11 +53,10 @@ namespace Frith
 			});
 
 
-			renderSystem = new SpriteRenderSystem(_spriteBatch, textureCache);
-			tilemapRenderSystem = new TilemapRenderSystem(_spriteBatch, tilemapCache, textureCache);
 			inputManager = new InputManager(this, displayManager);
 			cameraManager = new CameraManager();
-			animationLibrary = new AnimationLibrary();	
+			animationLibrary = new AnimationLibrary();
+			screenManager = new ScreenManager(this);
 
 			tiledMapManager = new TiledMapManager()
 			{
@@ -98,20 +95,24 @@ namespace Frith
 		protected override void Initialize()
 		{
 			// TODO: Add your initialization logic here
+		
+			
 
-			base.Initialize();
-			registry.AddSystem(tilemapRenderSystem);
-			registry.AddSystem(renderSystem);
 			
 
 			Services.AddService(displayManager);
 			Services.AddService(textureCache);
+			Services.AddService(tilemapCache);
 			Services.AddService(inputManager);
 			Services.AddService(cameraManager);
 			Services.AddService(tiledMapManager);
 			Services.AddService(animationLibrary);
+			Services.AddService(screenManager);
 
 			Components.Add(inputManager);
+			Components.Add(screenManager);
+
+			base.Initialize();
 		}
 
 
@@ -119,8 +120,6 @@ namespace Frith
 		{
 			
 
-			// TODO: use this.Content to load your game content here
-			texture = Content.Load<Texture2D>("snesBackground");
 		}
 
 		protected override void Update(GameTime gameTime)

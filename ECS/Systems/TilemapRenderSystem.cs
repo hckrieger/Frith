@@ -18,13 +18,14 @@ namespace Frith.ECS.Systems
 		private AssetCache<TiledMap?> tilemapCache;
 		private AssetCache<Texture2D> textureCache;
 		private SpriteBatch spriteBatch;
-		public TilemapRenderSystem(SpriteBatch spriteBatch, AssetCache<TiledMap?> tilemapCache, AssetCache<Texture2D> textureCache)
+		public TilemapRenderSystem(Game game, SpriteBatch spriteBatch)
 		{
 			RequireComponent<TransformComponent>();
 			RequireComponent<TiledMapComponent>();
 
-			this.tilemapCache = tilemapCache;
-			this.textureCache = textureCache;
+			tilemapCache = game.Services.GetService<AssetCache<TiledMap?>>();
+			textureCache = game.Services.GetService<AssetCache<Texture2D>>();
+
 			this.spriteBatch = spriteBatch;
 		}
 

@@ -13,11 +13,11 @@ namespace Frith.ECS.Systems
 	public class TiledObjectSystem : EcsSystem
 	{
 		private AssetCache<TiledMap> tiledMapCache;
-		public TiledObjectSystem(AssetCache<TiledMap> tiledMapCache)
+		public TiledObjectSystem(Game game)
 		{
 			RequireComponent<TiledObjectComponent>();
 			RequireComponent<TransformComponent>();
-			this.tiledMapCache = tiledMapCache;	
+			tiledMapCache = game.Services.GetService<AssetCache<TiledMap>>();
 
 			//SetSpawnObjects();
 		}
