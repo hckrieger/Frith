@@ -55,7 +55,7 @@ namespace Frith.Services
 			}
 		}
 
-		public void RemoveAsset(string name)
+		public void RemoveAnimation(string name)
 		{
 			if (animations.ContainsKey(name))
 			{

@@ -52,10 +52,6 @@ namespace Frith.Services
 			}
 			else
 				throw new Exception($"Can't add {screenName} because it already exists");
-
-
-
-
 			
 		}
 

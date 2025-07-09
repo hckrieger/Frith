@@ -13,6 +13,8 @@ using System.Threading.Tasks;
 using static Frith.Services.TiledMapManager;
 using System.Text.Json.Serialization;
 using System.ComponentModel;
+using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Frith
 {
@@ -24,11 +26,14 @@ namespace Frith
 		private DisplayManager displayManager;
 		private AssetCache<Texture2D> textureCache;
 		private AssetCache<TiledMap?> tilemapCache;
+		private AssetCache<Song> songCache;
+		private AssetCache<SoundEffect> soundEffectCache;
 		private InputManager inputManager;
 		private CameraManager cameraManager;
 		private TiledMapManager tiledMapManager;
 		private AnimationLibrary animationLibrary;
 		protected ScreenManager screenManager;
+		
 
 		
 		protected Registry registry = new Registry();
@@ -46,11 +51,15 @@ namespace Frith
 			
 
 			textureCache = new AssetCache<Texture2D>(a => Content.Load<Texture2D>(a));
+			songCache = new AssetCache<Song>(a => Content.Load<Song>(a));
+			soundEffectCache = new AssetCache<SoundEffect>(a => Content.Load<SoundEffect>(a));
 			tilemapCache = new AssetCache<TiledMap?>(a =>
 			{
 				string json = File.ReadAllText($"Content/{a}");
 				return JsonSerializer.Deserialize<TiledMap>(json);
 			});
+
+
 
 
 			inputManager = new InputManager(this, displayManager);
@@ -92,22 +101,32 @@ namespace Frith
 				
 		}
 
+		private void ServiceRegistration()
+		{
+			List<(Type, object)> servicesToAdd = new List<(Type, object)>()
+			{
+				(typeof(DisplayManager), displayManager),
+				(typeof(AssetCache<Texture2D>), textureCache),
+				(typeof(AssetCache<TiledMap>), tilemapCache),
+				(typeof(InputManager), inputManager),
+				(typeof(CameraManager), cameraManager),
+				(typeof(TiledMapManager),  tiledMapManager),
+				(typeof(AnimationLibrary), animationLibrary),
+				(typeof(ScreenManager), screenManager),
+				(typeof(AssetCache<Song>), songCache),
+				(typeof(AssetCache<SoundEffect>), soundEffectCache)
+			};
+
+			foreach (var (type, instance) in servicesToAdd)
+				Services.AddService(type, instance);
+		}
+
 		protected override void Initialize()
 		{
 			// TODO: Add your initialization logic here
-		
-			
 
+			ServiceRegistration();
 			
-
-			Services.AddService(displayManager);
-			Services.AddService(textureCache);
-			Services.AddService(tilemapCache);
-			Services.AddService(inputManager);
-			Services.AddService(cameraManager);
-			Services.AddService(tiledMapManager);
-			Services.AddService(animationLibrary);
-			Services.AddService(screenManager);
 
 			Components.Add(inputManager);
 			Components.Add(screenManager);
@@ -116,11 +135,7 @@ namespace Frith
 		}
 
 
-		protected override void LoadContent()
-		{
-			
-
-		}
+	
 
 		protected override void Update(GameTime gameTime)
 		{
@@ -128,9 +143,8 @@ namespace Frith
 				Exit();
 
 			foreach (var system in registry.GetAllSystems())
-			{
 				system.Update(gameTime);
-			}
+			
 
 			// TODO: Add your update logic here
 			registry.Update();
@@ -147,7 +161,7 @@ namespace Frith
 			GraphicsDevice.Clear(Color.CornflowerBlue);
 
 			// TODO: Add your drawing code here
-			base.Draw(gameTime);
+			
 
 			GraphicsDevice.SetRenderTarget(renderTarget);
 
@@ -155,9 +169,9 @@ namespace Frith
 
 
 				foreach (var system in registry.GetAllSystems())
-				{
 					system.Draw();
-				}
+
+				base.Draw(gameTime);
 
 			_spriteBatch.End();
 

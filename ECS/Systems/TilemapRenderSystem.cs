@@ -18,6 +18,7 @@ namespace Frith.ECS.Systems
 		private AssetCache<TiledMap?> tilemapCache;
 		private AssetCache<Texture2D> textureCache;
 		private SpriteBatch spriteBatch;
+		private TiledMapManager tiledMapManager;
 		public TilemapRenderSystem(Game game, SpriteBatch spriteBatch)
 		{
 			RequireComponent<TransformComponent>();
@@ -25,6 +26,7 @@ namespace Frith.ECS.Systems
 
 			tilemapCache = game.Services.GetService<AssetCache<TiledMap?>>();
 			textureCache = game.Services.GetService<AssetCache<Texture2D>>();
+			tiledMapManager = game.Services.GetService<TiledMapManager>();
 
 			this.spriteBatch = spriteBatch;
 		}
@@ -77,12 +79,9 @@ namespace Frith.ECS.Systems
 		{
 			base.Draw();
 
-			foreach (var entity in GetSystemEntities())
-			{
-				TiledMapComponent tilemapComponent = entity.GetComponent<TiledMapComponent>();
-				TransformComponent transformComponent = entity.GetComponent<TransformComponent>();
+			
 
-				TiledMap? tilemap = tilemapCache.GetAsset(tilemapComponent.Name);
+				TiledMap? tilemap = tiledMapManager.CurrentTiledMap;
 
 				if (tilemap == null || tilemap.Layers == null)
 					return;
@@ -101,7 +100,7 @@ namespace Frith.ECS.Systems
 							var tileset = FindTilesetForGid(tilemap, gid);
 							var texture = textureCache.GetAsset(tileset.Name ?? throw new Exception("Tiled Tileset name can't be null"));
 
-							spriteBatch.Draw(texture, transformComponent.Position + TilePosition(i, tilemap, layer), SourceRectangle(gid, tileset), Color.White, 0.0f, Vector2.Zero, 1f, SpriteEffects.None, .05f);
+							spriteBatch.Draw(texture, TilePosition(i, tilemap, layer), SourceRectangle(gid, tileset), Color.White, 0.0f, Vector2.Zero, 1f, SpriteEffects.None, .05f);
 						}
 
 					}
@@ -110,7 +109,7 @@ namespace Frith.ECS.Systems
 						continue;
 					}
 				}
-			}
+			
 		}
 	}
 }

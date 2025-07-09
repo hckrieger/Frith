@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Frith.Utils;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -22,164 +23,207 @@ namespace Frith.Services
 
 		public AssetCache<TiledMap?>? TiledMapCache { get; set; }
 
-		public class TiledMap
+		public bool CollidesWithImpassable(Rectangle bounds)
 		{
-			[JsonPropertyName("active")]
-			public bool Active { get; set; }
+			TiledMap? map = CurrentTiledMap;
+			if (map == null) return false;
 
-			[JsonPropertyName("width")]
-			public int Width { get; set; }
+			int tileWidth = map.TileWidth;
+			int tileHeight = map.TileHeight;
 
-			[JsonPropertyName("height")]
-			public int Height { get; set; }
+			int left = bounds.Left / tileWidth;
+			int right = bounds.Right / tileWidth;
+			int top = bounds.Top / tileHeight;
+			int bottom = bounds.Bottom / tileHeight;
 
-			[JsonPropertyName("tilewidth")]
-			public int TileWidth { get; set; }
+			if (map.Layers == null)
+				throw new NotImplementedException("The map's layers list cannot be null");
 
-			[JsonPropertyName("tileheight")]
-			public int TileHeight { get; set; }
+			foreach (var layer in map.Layers)
+			{
+				if (layer.Type != "tilelayer" || layer.Data == null || layer.CustomProperties == null)
+					continue;
 
-			public int MapPixelWidth => Width * TileWidth;
+				if (!layer.CustomProperties.Any(p => p.Name == "Collision Type" && p.Value?.ToString() == "Impassable"))
+					continue;
 
-			public int MapPixelHeight => Height * TileHeight;
-
-			[JsonPropertyName("renderorder")]
-			public string? RenderOrder { get; set; }
-
-			[JsonPropertyName("layers")]
-			public List<TiledLayer>? Layers { get; set; }
-
-			[JsonPropertyName("tilesets")]
-			public List<TiledTileset>? Tilesets { get; set; }
+				for (int y = top; y <= bottom; y++)
+				{
+					for (int x = left; x <= right; x++)
+					{
+						int index = GridUtils.CoordinateToIndex(new Point(x, y), map.Width);
+						if (index >= 0 && index < layer.Data.Count && layer.Data[index] != 0)
+						{
+							var tileRect = new Rectangle(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
+							if (bounds.Intersects(tileRect))
+							{
+								return true;
+							}
+						}
+					}
+				}
+			}
+			return false;
 		}
+	}
 
-		public class TiledLayer
-		{
-			[JsonPropertyName("id")]
-			public int Id { get; set; }
+	public class TiledMap
+	{
+		[JsonPropertyName("active")]
+		public bool Active { get; set; }
 
-			[JsonPropertyName("name")]
-			public string? Name { get; set; }
+		[JsonPropertyName("width")]
+		public int Width { get; set; }
 
-			[JsonPropertyName("type")]
-			public string? Type { get; set; } // "tilelayer", "objectgroup", etc.
+		[JsonPropertyName("height")]
+		public int Height { get; set; }
 
-			[JsonPropertyName("opacity")]
-			public float Opacity { get; set; }
+		[JsonPropertyName("tilewidth")]
+		public int TileWidth { get; set; }
 
-			[JsonPropertyName("visible")]
-			public bool Visible { get; set; }
+		[JsonPropertyName("tileheight")]
+		public int TileHeight { get; set; }
 
-			[JsonPropertyName("x")]
-			public int X { get; set; }
+		public int MapPixelWidth => Width * TileWidth;
 
-			[JsonPropertyName("y")]
-			public int Y { get; set; }
+		public int MapPixelHeight => Height * TileHeight;
 
-			// Tile layer specific
-			[JsonPropertyName("width")]
-			public int? Width { get; set; }
+		[JsonPropertyName("renderorder")]
+		public string? RenderOrder { get; set; }
 
-			[JsonPropertyName("height")]
-			public int? Height { get; set; }
+		[JsonPropertyName("layers")]
+		public List<TiledLayer>? Layers { get; set; }
 
-			[JsonPropertyName("data")]
-			public List<int>? Data { get; set; }
+		[JsonPropertyName("tilesets")]
+		public List<TiledTileset>? Tilesets { get; set; }
+	}
 
-			// Object layer specific
-			[JsonPropertyName("draworder")]
-			public string? DrawOrder { get; set; }
+	public class TiledLayer
+	{
+		[JsonPropertyName("id")]
+		public int Id { get; set; }
 
-			[JsonPropertyName("objects")]
-			public List<TiledObject>? Objects { get; set; }
+		[JsonPropertyName("name")]
+		public string? Name { get; set; }
 
-			[JsonPropertyName("properties")]
-			public List<CustomProperty?>? CustomProperties { get; set; }
-		}
+		[JsonPropertyName("type")]
+		public string? Type { get; set; } // "tilelayer", "objectgroup", etc.
 
-		public class CustomProperty
-		{
-			[JsonPropertyName("name")]
-			public string? Name { get; set; }
+		[JsonPropertyName("opacity")]
+		public float Opacity { get; set; }
 
-			[JsonPropertyName("type")]
-			public string? Type { get; set; }
+		[JsonPropertyName("visible")]
+		public bool Visible { get; set; }
 
-			[JsonPropertyName("value")]
-			public object? Value { get; set; }
-		}
+		[JsonPropertyName("x")]
+		public int X { get; set; }
 
-		public class TiledObject
-		{
-			[JsonPropertyName("id")]
-			public int Id { get; set; }
+		[JsonPropertyName("y")]
+		public int Y { get; set; }
 
-			[JsonPropertyName("name")]
-			public string? Name { get; set; }
+		// Tile layer specific
+		[JsonPropertyName("width")]
+		public int? Width { get; set; }
 
-			[JsonPropertyName("type")]
-			public string? Type { get; set; }
+		[JsonPropertyName("height")]
+		public int? Height { get; set; }
 
-			[JsonPropertyName("x")]
-			public float X { get; set; }
+		[JsonPropertyName("data")]
+		public List<int>? Data { get; set; }
 
-			[JsonPropertyName("y")]
-			public float Y { get; set; }
+		// Object layer specific
+		[JsonPropertyName("draworder")]
+		public string? DrawOrder { get; set; }
 
-			[JsonPropertyName("width")]
-			public float Width { get; set; }
+		[JsonPropertyName("objects")]
+		public List<TiledObject>? Objects { get; set; }
 
-			[JsonPropertyName("height")]
-			public float Height { get; set; }
+		[JsonPropertyName("properties")]
+		public List<CustomProperty?>? CustomProperties { get; set; }
+	}
 
-			[JsonPropertyName("visible")]
-			public bool Visible { get; set; }
+	public class CustomProperty
+	{
+		[JsonPropertyName("name")]
+		public string? Name { get; set; }
 
-			[JsonPropertyName("rotation")]
-			public float Rotation { get; set; }
+		[JsonPropertyName("type")]
+		public string? Type { get; set; }
 
-			[JsonPropertyName("point")]
-			public bool Point { get; set; }
+		[JsonPropertyName("value")]
+		public object? Value { get; set; }
+	}
 
-			[JsonPropertyName("properties")]
-			public List<CustomProperty?>? CustomProperties { get; set; }
-		}
+	public class TiledObject
+	{
+		[JsonPropertyName("id")]
+		public int Id { get; set; }
 
-		public class TiledTileset
-		{
-			[JsonPropertyName("columns")]
-			public int Columns { get; set; }
+		[JsonPropertyName("name")]
+		public string? Name { get; set; }
 
-			[JsonPropertyName("firstgid")]
-			public int FirstGid { get; set; }
+		[JsonPropertyName("type")]
+		public string? Type { get; set; }
 
-			[JsonPropertyName("image")]
-			public string? Image { get; set; }
+		[JsonPropertyName("x")]
+		public float X { get; set; }
 
-			[JsonPropertyName("imageheight")]
-			public int ImageHeight { get; set; }
+		[JsonPropertyName("y")]
+		public float Y { get; set; }
 
-			[JsonPropertyName("imagewidth")]
-			public int ImageWidth { get; set; }
+		[JsonPropertyName("width")]
+		public float Width { get; set; }
 
-			[JsonPropertyName("margin")]
-			public int Margin { get; set; }
+		[JsonPropertyName("height")]
+		public float Height { get; set; }
 
-			[JsonPropertyName("name")]
-			public string? Name { get; set; }
+		[JsonPropertyName("visible")]
+		public bool Visible { get; set; }
 
-			[JsonPropertyName("spacing")]
-			public int Spacing { get; set; }
+		[JsonPropertyName("rotation")]
+		public float Rotation { get; set; }
 
-			[JsonPropertyName("tilecount")]
-			public int TileCount { get; set; }
+		[JsonPropertyName("point")]
+		public bool Point { get; set; }
 
-			[JsonPropertyName("tileheight")]
-			public int TileHeight { get; set; }
+		[JsonPropertyName("properties")]
+		public List<CustomProperty?>? CustomProperties { get; set; }
+	}
 
-			[JsonPropertyName("tilewidth")]
-			public int TileWidth { get; set; }
-		}
+	public class TiledTileset
+	{
+		[JsonPropertyName("columns")]
+		public int Columns { get; set; }
+
+		[JsonPropertyName("firstgid")]
+		public int FirstGid { get; set; }
+
+		[JsonPropertyName("image")]
+		public string? Image { get; set; }
+
+		[JsonPropertyName("imageheight")]
+		public int ImageHeight { get; set; }
+
+		[JsonPropertyName("imagewidth")]
+		public int ImageWidth { get; set; }
+
+		[JsonPropertyName("margin")]
+		public int Margin { get; set; }
+
+		[JsonPropertyName("name")]
+		public string? Name { get; set; }
+
+		[JsonPropertyName("spacing")]
+		public int Spacing { get; set; }
+
+		[JsonPropertyName("tilecount")]
+		public int TileCount { get; set; }
+
+		[JsonPropertyName("tileheight")]
+		public int TileHeight { get; set; }
+
+		[JsonPropertyName("tilewidth")]
+		public int TileWidth { get; set; }
 	}
 }
 

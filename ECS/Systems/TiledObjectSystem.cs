@@ -13,11 +13,13 @@ namespace Frith.ECS.Systems
 	public class TiledObjectSystem : EcsSystem
 	{
 		private AssetCache<TiledMap> tiledMapCache;
+		private TiledMapManager tiledMapManager;	
 		public TiledObjectSystem(Game game)
 		{
 			RequireComponent<TiledObjectComponent>();
 			RequireComponent<TransformComponent>();
 			tiledMapCache = game.Services.GetService<AssetCache<TiledMap>>();
+			tiledMapManager = game.Services.GetService<TiledMapManager>();
 
 			//SetSpawnObjects();
 		}
@@ -30,9 +32,8 @@ namespace Frith.ECS.Systems
 
 		public void SetSpawnObjects()
 		{
-			foreach (string key in tiledMapCache.AssetKeys)
-			{
-				TiledMap? tiledMap = tiledMapCache.GetAsset(key);
+		
+				TiledMap? tiledMap = tiledMapManager.CurrentTiledMap;
 
 
 				if (tiledMap == null || tiledMap?.Layers == null)
@@ -94,7 +95,7 @@ namespace Frith.ECS.Systems
 
 
 
-			}
+			
 		}
 	}
 
