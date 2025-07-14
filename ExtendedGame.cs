@@ -15,6 +15,7 @@ using System.Text.Json.Serialization;
 using System.ComponentModel;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
+using System.Runtime.CompilerServices;
 
 namespace Frith
 {
@@ -32,6 +33,7 @@ namespace Frith
 		private CameraManager cameraManager;
 		private TiledMapManager tiledMapManager;
 		private AnimationLibrary animationLibrary;
+		private EventBus eventBus;
 		protected ScreenManager screenManager;
 		protected bool useCamera = false;
 		
@@ -72,6 +74,8 @@ namespace Frith
 			{
 				TiledMapCache = tilemapCache
 			};
+
+			eventBus = new EventBus();	
 		}
 
 
@@ -115,7 +119,8 @@ namespace Frith
 				(typeof(AnimationLibrary), animationLibrary),
 				(typeof(ScreenManager), screenManager),
 				(typeof(AssetCache<Song>), songCache),
-				(typeof(AssetCache<SoundEffect>), soundEffectCache)
+				(typeof(AssetCache<SoundEffect>), soundEffectCache),
+				(typeof(EventBus), eventBus),	
 			};
 
 			foreach (var (type, instance) in servicesToAdd)

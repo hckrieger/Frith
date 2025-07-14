@@ -1,4 +1,6 @@
 ﻿using Frith.ECS.Components;
+using Frith.ECS.Events;
+using Frith.Services;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -11,11 +13,14 @@ namespace Frith.ECS.Systems
 {
 	public class CollisionSystem : EcsSystem
 	{
-
-		public CollisionSystem()
+		private EventBus eventBus;
+		public CollisionSystem(Game game)
 		{
 			RequireComponent<TransformComponent>();
 			RequireComponent<BoxColliderComponent>();	
+
+			eventBus = game.Services.GetService<EventBus>();
+
 		}
 
 		public override void Update(GameTime gameTime)
@@ -45,6 +50,7 @@ namespace Frith.ECS.Systems
 					if (collisionHappened)
 					{
 						Logger.Info($"Entity {a.GetId} is colliding with Entity {b.GetId}");
+						eventBus.EmitEvent(new CollisionEvent(a, b));	
 					}
 				}
 			}
