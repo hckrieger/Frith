@@ -6,8 +6,8 @@ C:\Users\hckri\source\repos\MonoGame\libraries\Frith\obj\Debug\net9.0\Frith.Gene
 C:\Users\hckri\source\repos\MonoGame\libraries\Frith\obj\Debug\net9.0\Frith.AssemblyInfoInputs.cache
 C:\Users\hckri\source\repos\MonoGame\libraries\Frith\obj\Debug\net9.0\Frith.AssemblyInfo.cs
 C:\Users\hckri\source\repos\MonoGame\libraries\Frith\obj\Debug\net9.0\Frith.csproj.CoreCompileInputs.cache
+C:\Users\hckri\source\repos\MonoGame\libraries\Frith\obj\Debug\net9.0\Frith.sourcelink.json
 C:\Users\hckri\source\repos\MonoGame\libraries\Frith\obj\Debug\net9.0\Frith.dll
 C:\Users\hckri\source\repos\MonoGame\libraries\Frith\obj\Debug\net9.0\refint\Frith.dll
 C:\Users\hckri\source\repos\MonoGame\libraries\Frith\obj\Debug\net9.0\Frith.pdb
 C:\Users\hckri\source\repos\MonoGame\libraries\Frith\obj\Debug\net9.0\ref\Frith.dll
-C:\Users\hckri\source\repos\MonoGame\libraries\Frith\obj\Debug\net9.0\Frith.sourcelink.json

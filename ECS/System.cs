@@ -40,7 +40,7 @@ namespace Frith.ECS
 
 		public List<Entity> GetSystemEntities()
 		{
-			return entities;
+			return entities.Where(e => e.IsActive).ToList();
 		}
 
 		public Signature? GetComponentSignature()

@@ -22,9 +22,9 @@ namespace Frith.ECS
 	/// A pool is just a vector (contiguous data) of objects of type T
 	/// </summary>
 	/// 
-	public class Pool<T> : IPool where T : struct
+	public class Pool<T> : IPool
 	{
-		private T[] data;
+		protected T[] data;
 		private int size = 0;
 		public ref T this[int index]
 		{
@@ -61,7 +61,7 @@ namespace Frith.ECS
 			Array.Clear(data, 0, data.Length);
 		}
 
-		public void Add(T componentObject)
+		public virtual void Add(T componentObject)
 		{
 			data[size++] = (componentObject);
 		}

@@ -34,6 +34,8 @@ namespace Frith.ECS
 	{
 		private int id = id;
 
+		public bool IsActive { get; set; } = true;
+
 
 		public Registry? registry;
 
@@ -90,9 +92,12 @@ namespace Frith.ECS
 			registry?.GroupEntity(this, group);
 		}
 
-		public bool? BelongsToGroup(string group)
+		public bool BelongsToGroup(string group)
 		{
-			return registry?.EntityBelongsToGroup(this, group);
+			if (registry != null)
+				return registry.EntityBelongsToGroup(this, group);
+
+			throw new Exception("Registry can't be null");
 		}
 
 		//public static bool operator =(Entity entity, Entity other) = default;
@@ -103,9 +108,9 @@ namespace Frith.ECS
 			return entity?.id == other?.id;
 		}
 
-		public static bool operator !=(Entity entity, Entity other)
+		public static bool operator !=(Entity? entity, Entity? other)
 		{
-			return entity.id != other.id;
+			return entity?.id != other?.id;
 		}
 
 		public static bool operator >(Entity entity, Entity other)

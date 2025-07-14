@@ -20,7 +20,7 @@ namespace Frith.ECS
 		private IPool[] componentPools = new IPool[1];
 
 		/// <summary>
-		/// List of component signatures perentity, saying which component is turned on for a given entity
+		/// List of component signatures per entity, saying which component is turned on for a given entity
 		/// list index = entity id
 		/// </summary>
 
@@ -156,8 +156,9 @@ namespace Frith.ECS
 		{
 			var entityId = entity.GetId();
 
+			var componentId = Component<TComponent>.GetId(); // You need this type ID system
 
-			return entityComponentSignatures[entityId].HasAnySet();
+			return entityComponentSignatures[entityId].Get(componentId);
 		}
 
 		public ref TComponent GetComponent<TComponent>(Entity entity) where TComponent : struct
@@ -206,7 +207,7 @@ namespace Frith.ECS
 
 		public bool EntityHasTag(Entity entity, string tag)
 		{
-			return entityPerTag.ContainsKey(tag);	
+			return entityPerTag.ContainsKey(tag) && entityPerTag[tag] == entity;	
 		}
 
 		public Entity GetEntityByTag(string tag)

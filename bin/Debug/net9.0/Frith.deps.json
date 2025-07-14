@@ -8,13 +8,13 @@
     ".NETCoreApp,Version=v9.0": {
       "Frith/1.0.0": {
         "dependencies": {
-          "MonoGame.Framework.DesktopGL": "3.8.3"
+          "MonoGame.Framework.DesktopGL": "3.8.4"
         },
         "runtime": {
           "Frith.dll": {}
         }
       },
-      "MonoGame.Framework.DesktopGL/3.8.3": {
+      "MonoGame.Framework.DesktopGL/3.8.4": {
         "dependencies": {
           "MonoGame.Library.OpenAL": "1.23.1.10",
           "MonoGame.Library.SDL": "2.32.2.1",
@@ -22,8 +22,8 @@
         },
         "runtime": {
           "lib/net8.0/MonoGame.Framework.dll": {
-            "assemblyVersion": "3.8.3.0",
-            "fileVersion": "3.8.3.0"
+            "assemblyVersion": "3.8.4.0",
+            "fileVersion": "3.8.4.0"
           }
         }
       },
@@ -122,12 +122,12 @@
       "serviceable": false,
       "sha512": ""
     },
-    "MonoGame.Framework.DesktopGL/3.8.3": {
+    "MonoGame.Framework.DesktopGL/3.8.4": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-cuyMJrK6fHD13J3gqkSx5yF3agbI9E9sXtynhq6IDmUnvi43PTfbLEH04MStDzJJ3OPGaKDW1zcxqA/G8GwOUw==",
-      "path": "monogame.framework.desktopgl/3.8.3",
-      "hashPath": "monogame.framework.desktopgl.3.8.3.nupkg.sha512"
+      "sha512": "sha512-2WR/vPNPcmQ9h4EhMkfpUfMW0Krm6pX0ElkZwSRI1IUecPuzLeXt0i9NRwGxZBUdcNdNxACCmswrxSf4B95Obg==",
+      "path": "monogame.framework.desktopgl/3.8.4",
+      "hashPath": "monogame.framework.desktopgl.3.8.4.nupkg.sha512"
     },
     "MonoGame.Library.OpenAL/1.23.1.10": {
       "type": "package",

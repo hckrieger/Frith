@@ -64,7 +64,7 @@ namespace Frith.ECS.Systems
 
 
 
-				spriteBatch.Draw(texture, destinationRectangle, sprite.SourceRegion, sprite.Color, transform.Rotation, Vector2.Zero, SpriteEffects.None, .5f);
+				spriteBatch.Draw(texture, destinationRectangle, sprite.SourceRegion, sprite.Color, transform.Rotation, transform.Origin, SpriteEffects.None, .5f);
 			}
 		}
 	}

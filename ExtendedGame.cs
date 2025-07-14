@@ -33,6 +33,7 @@ namespace Frith
 		private TiledMapManager tiledMapManager;
 		private AnimationLibrary animationLibrary;
 		protected ScreenManager screenManager;
+		protected bool useCamera = false;
 		
 
 		
@@ -165,7 +166,9 @@ namespace Frith
 
 			GraphicsDevice.SetRenderTarget(renderTarget);
 
-			_spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: cameraManager.TransformMatrix);
+			Matrix matrix = useCamera ? cameraManager.TransformMatrix : Matrix.Identity;
+
+			_spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: matrix);
 
 
 				foreach (var system in registry.GetAllSystems())
