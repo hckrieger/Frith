@@ -10,12 +10,9 @@ namespace Frith.ECS
 {
 
 
-	public class IPool
+	public interface IPool
 	{
-		~IPool()
-		{
-			
-		}
+		public void RemoveEntityFromPool(int entityId);
 	}
 
 	/// <summary>
@@ -26,6 +23,11 @@ namespace Frith.ECS
 	{
 		protected T[] data;
 		private int size = 0;
+
+
+		private Dictionary<int, int> entityIdToIndex = [];
+		private Dictionary<int, int> indexToEntityId = [];
+
 		public ref T this[int index]
 		{
 			get
@@ -38,27 +40,34 @@ namespace Frith.ECS
 		}
 
 
-		public Pool(int size = 100)
+		public Pool(int capacity = 100)
 		{
+			size = 0;
 			data = new T[size];
 
-			Array.Resize(ref data, size);
+			Array.Resize(ref data, capacity);
 	
 		}
 
 		public int? GetSize()
 		{
-			return data?.Length;
+			return size;
 		}
 
 		public bool isEmpty()
 		{
-			return data?.Length == 0;
+			return size == 0;
+		}
+
+		public void Resize(int n)
+		{
+			Array.Resize(ref data, n);
 		}
 
 		public void Clear()
 		{
 			Array.Clear(data, 0, data.Length);
+			size = 0;
 		}
 
 		public virtual void Add(T componentObject)
@@ -66,18 +75,55 @@ namespace Frith.ECS
 			data[size++] = (componentObject);
 		}
 
-		public void Set(int index, T componentObject)
+		public void Set(int entityId, T componentObject)
 		{
-			if (data != null)
+			if (entityIdToIndex.ContainsKey(entityId))
+			{
+				int index = entityIdToIndex[entityId];
 				data[index] = componentObject;
+			} else
+			{
+				int index = size;
+				entityIdToIndex[entityId] = index;
+				indexToEntityId[index] = entityId;
+
+				if (index >= data.Length)
+					Array.Resize(ref data, size * 2);
+
+				data[index] = componentObject;
+				size++;
+			}
 		}
 
-		public T Get(int index)
+		public void Remove(int entityId)
 		{
+			int indexOfRemoved = entityIdToIndex[entityId];
+			int indexOfLast = size - 1;
+			data[indexOfRemoved] = data[indexOfLast];
+
+			int entityIdOfLastElement = indexToEntityId[indexOfLast];
+			entityIdToIndex[entityIdOfLastElement] = indexOfRemoved;
+			indexToEntityId[indexOfRemoved] = indexOfLast;
+
+			entityIdToIndex.Remove(entityId);
+			indexToEntityId.Remove(indexOfLast);
+
+			size--;
+		}
+
+		public ref T Get(int entityId) 
+		{
+			var index = entityIdToIndex[entityId];
 			if (data != null)	
-				return data[index];
+				return ref data[index];
 
 			throw new NullReferenceException("component object can't be null");
+		}
+
+		public void RemoveEntityFromPool(int entityId)
+		{
+			if (entityIdToIndex.ContainsKey(entityId))
+				Remove(entityId);
 		}
 	}
 }

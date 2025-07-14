@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Frith")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6fd604a0ea21586f64ec320524d3bdc4538f9ae2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+193d2cf978d788de63f176b9c65bbda00cd318ce")]
 [assembly: System.Reflection.AssemblyProductAttribute("Frith")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Frith")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

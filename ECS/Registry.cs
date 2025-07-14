@@ -116,7 +116,7 @@ namespace Frith.ECS
 
 			//If the component id is higher than the component count then 
 			//Add a new pool to the list of component pools
-			
+
 			if (componentPools.Length <= componentId)
 			{
 				Array.Resize(ref componentPools, componentId + 1);
@@ -140,12 +140,19 @@ namespace Frith.ECS
 			entityComponentSignatures?[entityId]?.Set(componentId, true);
 
 			Logger.Info($"Component id = {componentId} was added to entity id {entityId}");
+
+			
 		}
 
 		public void RemoveComponent<TComponent>(Entity entity) where TComponent : struct
 		{
 			var componentId = Component<TComponent>.GetId();
 			var entityId = entity.GetId();
+
+	
+
+			Pool<TComponent>? componentPool = (Pool<TComponent>?)componentPools[componentId];
+			componentPool?.Remove(entityId);
 
 			entityComponentSignatures?[entityId]?.Set(componentId, false);
 
@@ -169,7 +176,7 @@ namespace Frith.ECS
 
 			var componentPool = (Pool<TComponent>?)componentPools?[componentId] ?? throw new InvalidOperationException("component pool can't be null");
 
-			return ref componentPool[entityId];
+			return ref componentPool.Get(entityId);
 
 			
 		}
@@ -188,6 +195,13 @@ namespace Frith.ECS
 				RemoveEntityFromSystems(entity);
 
 				entityComponentSignatures[entity.GetId()].SetAll(false);
+
+				foreach (var pool in componentPools)
+				{
+					if (pool != null)
+						pool.RemoveEntityFromPool(entity.GetId());
+				}
+					
 
 				freeIds.AddLast(entity.GetId());
 
